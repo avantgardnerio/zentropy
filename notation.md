@@ -42,6 +42,13 @@ A working glossary mapping Greek letters, symbols, and key equations from the ze
 - **Programmer intuition:** like `sum` but with multiplication. `math.prod(p[t] for t in range(1, tau+1))`.
 - **Where it shows up in Still 2012:** Eq. 4 (probability of a path).
 
+### Ω — "oh-MEG-ah" (capital omega)
+
+- **In statistical mechanics:** the **number of microstates** consistent with a given macrostate — the *multiplicity*. Boltzmann's entropy formula: $S = k_B \ln \Omega$.
+- **Programmer intuition:** the cardinality of the set of "distinguishable ways the system could currently be." A bit that "could be 0 or 1" has $\Omega = 2$; a bit forced to a single definite value has $\Omega = 1$.
+- **Why Landauer cares:** erasing a bit collapses $\Omega$ from 2 to 1, which lowers the bit's entropy by $k_B \ln 2$. By the second law, that entropy decrease must show up as heat dumped to the environment: $k_B T \ln 2$ per bit. This is the entire derivation of Landauer's bound.
+- **Convention warning:** $\Omega$ is also used for angular frequency, solid angle, and electrical resistance (ohms). Always check context.
+
 ---
 
 ## Other constants and notation
@@ -87,6 +94,58 @@ A working glossary mapping Greek letters, symbols, and key equations from the ze
 - Always $\ge 0$; equals 0 iff $p = q$.
 - **What it measures:** how badly $q$ approximates $p$. **Asymmetric** — $D_\text{KL}[p \,\Vert\, q] \ne D_\text{KL}[q \,\Vert\, p]$.
 - **Programmer intuition:** the extra cost, in nats, of encoding samples from $p$ using a code optimized for $q$. The bigger the divergence, the worse the mismatch.
+
+---
+
+## Key concepts
+
+### Exergy — the textbook quantity
+
+Maximum useful work extractable from a system as it equilibrates with a *specified reference environment*. Units: joules.
+
+Distinct from Helmholtz free energy $F = U - TS$, which is calculated for a system alone given a temperature. Exergy explicitly accounts for what could be extracted via gradients between system and environment — sunlight reaching Earth, undiscovered oil, a Dyson swarm's stellar input. **Exergy is the strict superset of free energy.**
+
+A schematic formula (system at $U, S, V$, composition $N_i$; reference at $T_0, p_0, \mu_i^0$):
+
+$$B = U - U_0 - T_0(S - S_0) + p_0(V - V_0) - \sum_i \mu_i^0 (N_i - N_i^0)$$
+
+- $U$, $S$, $V$, $N_i$ — system internal energy, entropy, volume, mole numbers of species $i$
+- Subscript 0 — reference environment values
+- $\mu_i^0$ — reference chemical potential of species $i$
+
+Exergy is *observer-independent*. It is a property of (system, reference environment, physics) — not of who can extract it.
+
+### Zenergy (N) — the zentropy-specific quantity
+
+```
+N(t) := exergy presently being harnessed by an agent or lineage at time t,
+        within the forward light cone
+```
+
+Units: joules. Project nickname: **zenergy** (Brent's coinage). Paper term: **coupled exergy** or *accessible exergy*.
+
+**Realized, not potential.** Zenergy is the *subset of exergy actively being processed* by the agent — not the total exergy theoretically reachable given capabilities. A Dyson sphere that *exists but sits idle* doesn't increase N; one that *processes stellar output* does. See `definitions.md` for full treatment including the "Life = ∆N ≥ 0" working claim and the realized-vs-potential reasoning.
+
+### Decomposition of `k_B T ln 2` (the Landauer cost of one bit)
+
+| Symbol | What it is | Value at $T \approx 300$ K |
+|---|---|---|
+| $k_B$ | Boltzmann's constant — exchange rate between K and J | $1.38 \times 10^{-23}$ J/K |
+| $T$ | absolute temperature | $\sim 300$ K |
+| $k_B T$ | average thermal energy per degree of freedom | $\sim 4.1 \times 10^{-21}$ J |
+| $\ln 2$ | natural log of 2 — converts binary bits to nats | $0.693$ |
+| $k_B T \ln 2$ | thermodynamic cost of one bit at temperature $T$ | $\sim 2.8 \times 10^{-21}$ J |
+
+### Decomposition of `F = U - TS` (Helmholtz free energy)
+
+| Symbol | What it is |
+|---|---|
+| $F$ | Helmholtz free energy — extractable work at fixed $T$, $V$ |
+| $U$ | internal energy — *all* energy in the system |
+| $T$ | absolute temperature |
+| $S$ | entropy — same quantity as Shannon entropy in different units |
+| $T \cdot S$ | thermal disorder energy locked up as entropy; not extractable |
+| $U - T \cdot S$ | total minus locked-up = extractable |
 
 ---
 

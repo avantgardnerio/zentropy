@@ -1,8 +1,6 @@
 // Zentropy research landscape — graphviz source
-// Mirror of the Mermaid diagram in landscape.md, for high-resolution static rendering.
-// Render: dot -Tpng landscape.dot -o landscape.png
-//         dot -Tsvg landscape.dot -o landscape.svg
-// Install graphviz first if you don't have it: apt install graphviz / brew install graphviz
+// Source of truth; landscape.png and landscape.svg are derived outputs.
+// Render: dot -Tpng landscape.dot -o landscape.png && dot -Tsvg landscape.dot -o landscape.svg
 
 digraph zentropy_landscape {
     rankdir=TB;
@@ -10,13 +8,26 @@ digraph zentropy_landscape {
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10, fillcolor="white"];
     edge [fontname="Helvetica", fontsize=9, color="#444444"];
 
-    // ── Foundations (grey) ───────────────────────────────────────────
-    Shannon    [label="Shannon 1948\ninfo theory", fillcolor="#efefef"];
-    Landauer   [label="Landauer 1961\ninfo erasure costs kT ln 2", fillcolor="#efefef"];
-    Jarzynski  [label="Jarzynski 1997\nnon-eq work relation", fillcolor="#efefef"];
-    Crooks     [label="Crooks 1999\nfluctuation theorem", fillcolor="#efefef"];
-    Seifert    [label="Seifert 2012\nstochastic thermo review", fillcolor="#efefef"];
-    Parrondo   [label="Parrondo et al 2015\nThermo of Information review", fillcolor="#efefef"];
+    // ── Deep foundations (grey) ──────────────────────────────────────
+    Soddy26       [label="Soddy 1926\nWealth, Virtual Wealth & Debt\n(thermo economics origin)", fillcolor="#efefef"];
+    Schrodinger44 [label="Schrödinger 1944\nWhat is Life?\n(negentropy precursor)", fillcolor="#efefef"];
+    Shannon       [label="Shannon 1948\ninfo theory", fillcolor="#efefef"];
+    Brillouin53   [label="Brillouin 1953\nNegentropy Principle of Info\n(info ↔ energy bridge)", fillcolor="#efefef"];
+    Landauer      [label="Landauer 1961\ninfo erasure costs kT ln 2", fillcolor="#efefef"];
+    Kardashev64   [label="Kardashev 1964\nCivilization types I/II/III\n(direct zenergy precursor)", fillcolor="#efefef"];
+    Jarzynski     [label="Jarzynski 1997\nnon-eq work relation", fillcolor="#efefef"];
+    Crooks        [label="Crooks 1999\nfluctuation theorem", fillcolor="#efefef"];
+    Kauffman00    [label="Kauffman 2000\nInvestigations\n(adjacent possible — direct zenergy precursor)", fillcolor="#efefef"];
+    Seifert       [label="Seifert 2012\nstochastic thermo review", fillcolor="#efefef"];
+    Parrondo      [label="Parrondo et al 2015\nThermo of Information review", fillcolor="#efefef"];
+
+    // ── Exergy / ecological energetics lineage (white) ───────────────
+    Odum       [label="Howard Odum 1970s+\nemergy / embodied energy\n(direct zenergy precursor)"];
+    Hall       [label="Charles Hall\nEROI / biophysical economics"];
+    AyresWarr09 [label="Ayres & Warr 2009\nThe Economic Growth Engine\n(exergy efficiency drives growth)"];
+    SchnKay05  [label="Schneider & Kay 2005\nInto the Cool\n(life dissipates gradients)"];
+    Smil       [label="Vaclav Smil 2008–2019\nEnergy and Civilization\n(empirical backbone)"];
+    MSS95      [label="Maynard Smith &amp; Szathmáry 1995\nMajor Transitions in Evolution\n(canonical phase-transition framework)"];
 
     // ── Round 1 reading (yellow) ─────────────────────────────────────
     Still12    [label="★ Still et al 2012\nThermodynamics of Prediction\n(the keystone)",
@@ -34,33 +45,53 @@ digraph zentropy_landscape {
     Ramstead   [label="Ramstead et al 2021\nBayesian Mechanics"];
 
     // ── Target (blue) ────────────────────────────────────────────────
-    Zentropy   [label="ZENTROPY CONVERGENCE PAPER\n(your proposed contribution)",
+    Zentropy   [label="ZENTROPY CONVERGENCE PAPER\n(your proposed contribution)\nN := zenergy\nLife ≡ ∆N ≥ 0",
                 shape=box, style="rounded,filled", fillcolor="#9fc5e8", color="#0b5394",
                 penwidth=4, fontsize=11];
 
-    // ── Edges: direct intellectual dependency ────────────────────────
-    Shannon    -> Still12;
-    Shannon    -> Parrondo;
-    Landauer   -> Parrondo;
-    Landauer   -> Still12;
-    Jarzynski  -> Crooks;
-    Jarzynski  -> Seifert;
-    Crooks     -> Seifert;
-    Crooks     -> Still12;
-    Crooks     -> Parrondo;
-    Seifert    -> England13;
-    Seifert    -> ParrDaC;
-    Parrondo   -> ParrDaC;
-    Still12    -> Still20;
-    Still12    -> Zentropy;
-    England13  -> Zentropy;
-    Friston10  -> Friston13;
-    Friston13  -> ParrDaC;
-    Friston13  -> Zentropy;
-    ParrDaC    -> Ramstead;
+    // ── Edges: foundations into the keystones ────────────────────────
+    Schrodinger44 -> Brillouin53;
+    Schrodinger44 -> SchnKay05;
+    Soddy26       -> Hall;
+    Soddy26       -> Odum;
+    Soddy26       -> AyresWarr09;
+    Shannon       -> Brillouin53;
+    Shannon       -> Still12;
+    Shannon       -> Parrondo;
+    Brillouin53   -> Landauer;
+    Brillouin53   -> Still12;
+    Landauer      -> Parrondo;
+    Landauer      -> Still12;
+    Jarzynski     -> Crooks;
+    Jarzynski     -> Seifert;
+    Crooks        -> Seifert;
+    Crooks        -> Still12;
+    Crooks        -> Parrondo;
+    Seifert       -> England13;
+    Seifert       -> ParrDaC;
+    Parrondo      -> ParrDaC;
+    SchnKay05     -> England13;
+
+    // ── Edges: keystones to Zentropy ─────────────────────────────────
+    Still12   -> Still20;
+    Still12   -> Zentropy;
+    England13 -> Zentropy;
+    Friston10 -> Friston13;
+    Friston13 -> ParrDaC;
+    Friston13 -> Zentropy;
+    ParrDaC   -> Ramstead;
     Schmidhuber -> Zentropy;
 
-    // ── Edges: informs but not load-bearing (dashed) ─────────────────
-    Ramstead   -> Zentropy [style=dashed];
-    Still20    -> Zentropy [style=dashed];
+    // ── Edges: direct zenergy precursors to Zentropy ─────────────────
+    Kardashev64 -> Zentropy;
+    Kauffman00  -> Zentropy;
+    Odum        -> Zentropy;
+
+    // ── Edges: exergy / energetics lineage informs Zentropy (dashed) ─
+    Hall        -> Zentropy [style=dashed];
+    AyresWarr09 -> Zentropy [style=dashed];
+    Smil        -> Zentropy;
+    MSS95       -> Zentropy;
+    Ramstead    -> Zentropy [style=dashed];
+    Still20     -> Zentropy [style=dashed];
 }
