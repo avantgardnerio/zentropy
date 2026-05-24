@@ -1,0 +1,66 @@
+// Zentropy research landscape — graphviz source
+// Mirror of the Mermaid diagram in landscape.md, for high-resolution static rendering.
+// Render: dot -Tpng landscape.dot -o landscape.png
+//         dot -Tsvg landscape.dot -o landscape.svg
+// Install graphviz first if you don't have it: apt install graphviz / brew install graphviz
+
+digraph zentropy_landscape {
+    rankdir=TB;
+    bgcolor="white";
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10, fillcolor="white"];
+    edge [fontname="Helvetica", fontsize=9, color="#444444"];
+
+    // ── Foundations (grey) ───────────────────────────────────────────
+    Shannon    [label="Shannon 1948\ninfo theory", fillcolor="#efefef"];
+    Landauer   [label="Landauer 1961\ninfo erasure costs kT ln 2", fillcolor="#efefef"];
+    Jarzynski  [label="Jarzynski 1997\nnon-eq work relation", fillcolor="#efefef"];
+    Crooks     [label="Crooks 1999\nfluctuation theorem", fillcolor="#efefef"];
+    Seifert    [label="Seifert 2012\nstochastic thermo review", fillcolor="#efefef"];
+    Parrondo   [label="Parrondo et al 2015\nThermo of Information review", fillcolor="#efefef"];
+
+    // ── Round 1 reading (yellow) ─────────────────────────────────────
+    Still12    [label="★ Still et al 2012\nThermodynamics of Prediction\n(the keystone)",
+                fillcolor="#ffd966", color="#7f6000", penwidth=3];
+    England13  [label="★ England 2013\nself-replication stat physics",
+                fillcolor="#ffd966", color="#7f6000", penwidth=3];
+    Friston13  [label="★ Friston 2013\nLife as we know it",
+                fillcolor="#ffd966", color="#7f6000", penwidth=3];
+
+    // ── Adjacent / synthesis attempts (white) ────────────────────────
+    Friston10  [label="Friston 2010\nFEP as unified brain theory"];
+    Schmidhuber [label="Schmidhuber 2010\ncompression-as-creativity"];
+    ParrDaC    [label="Parr, Da Costa, Friston 2020\nMarkov blankets & stoch thermo"];
+    Still20    [label="Still 2020\nCost & benefit of memory"];
+    Ramstead   [label="Ramstead et al 2021\nBayesian Mechanics"];
+
+    // ── Target (blue) ────────────────────────────────────────────────
+    Zentropy   [label="ZENTROPY CONVERGENCE PAPER\n(your proposed contribution)",
+                shape=box, style="rounded,filled", fillcolor="#9fc5e8", color="#0b5394",
+                penwidth=4, fontsize=11];
+
+    // ── Edges: direct intellectual dependency ────────────────────────
+    Shannon    -> Still12;
+    Shannon    -> Parrondo;
+    Landauer   -> Parrondo;
+    Landauer   -> Still12;
+    Jarzynski  -> Crooks;
+    Jarzynski  -> Seifert;
+    Crooks     -> Seifert;
+    Crooks     -> Still12;
+    Crooks     -> Parrondo;
+    Seifert    -> England13;
+    Seifert    -> ParrDaC;
+    Parrondo   -> ParrDaC;
+    Still12    -> Still20;
+    Still12    -> Zentropy;
+    England13  -> Zentropy;
+    Friston10  -> Friston13;
+    Friston13  -> ParrDaC;
+    Friston13  -> Zentropy;
+    ParrDaC    -> Ramstead;
+    Schmidhuber -> Zentropy;
+
+    // ── Edges: informs but not load-bearing (dashed) ─────────────────
+    Ramstead   -> Zentropy [style=dashed];
+    Still20    -> Zentropy [style=dashed];
+}
