@@ -230,3 +230,44 @@ None of these connects the framing to *selection-by-thermodynamic-dissipation* (
 - The AI / datacenter reference-environment question is interesting in its own right and may justify its own paper.
 - The "realized vs potential" framing distinguishes zenergy from Kauffman's "adjacent possible" (potential) and from naive exergy (total). This is worth a paragraph in the paper.
 - "Life = ∆N ≥ 0" is a *physically testable* definition. If it holds, it's a paper headline.
+
+---
+
+## Open problems (the TODO list)
+
+The honest catalog of what is *asserted* in this document and still requires *derivation* or *measurement* to become defensible. The discipline ([[memory/project-roadmap]]): read first, formalize second, prove third. Premature formalization is the failure mode.
+
+### Foundational definitions still owed
+
+- **Operational definition of N.** "Realized harnessing" is qualitative. The paper needs a single computable definition consistent across vent bacteria, humans, and AI systems. Candidate: *net exergy throughput crossing the agent's effective boundary per unit time, integrated over the period of interest.* Decide on the specific functional form and defend it.
+- **Operational definition of ∆N.** Specify: integration measure (per-agent? per-lineage? per-light-cone slice?), counterfactual baseline (likely England-style passive trajectories of the same medium), lineage-branching treatment (sum over descendants?), and what *"persistent"* formally requires.
+
+### Theoretical claims asserted; not yet derived
+
+- **The convergence proof.** Show that max-∆N trajectories coincide with compression-identity-maximizing trajectories, *under stated conditions*, as a consequence of Still 2012 + England 2013. **Currently asserted throughout. Not yet derived.** This is the central theoretical contribution.
+- **Bridge Still's bound to replicator DNA.** Formally identify replicator structure as the "memory" that Still's framework applies to. Intuitively obvious; needs to be made formally precise.
+- **Bridge England's stochastic dynamics to Darwinian selection.** England's result biases *trajectory probabilities*; Darwinian selection requires *heritable variation + differential reproduction*. The bridge must be made explicit, or selection must be accepted as a side constraint. This is where critics already push on England's framework.
+- **Resolve the apparent Still ↔ England tension.** Still: better predictors dissipate *less*. England: selection favors *more* dissipators. Resolution likely runs through distinguishing **throughput** (gradient-absorption rate) from **efficiency** (work per joule dissipated). Make explicit in the proof, because it is not obvious from either paper alone.
+- **Connect compression to predictive information formally.** *"Compression of L(Ψ)"* and Still's *"predictive information"* share intuition but are technically distinct (Kolmogorov vs Shannon, lossless vs lossy, structural vs statistical). The convergence proof must formally bridge them.
+- **Substrate-agnosticism in the derivation.** Show the derivation generalizes to AI / memes / civilizations without modification. Likely easy once the biological case lands, because Still's bound is substrate-neutral.
+
+### Empirical claims requiring validation
+
+- **Compute ∆N for the canonical vent-bacteria case.** Make the worked example actually worked, in joule units, with citations to measurable data (vent temperature gradients, chemoautotroph biomass, replication rates).
+- **Compute ∆N for each phase transition** in the ladder (aerobic, multicellularity, brains, memetics, language, writing, industrial, AI). Compare against known empirical orders of magnitude.
+- **Validate against Smil's macroeconomic data.** Does the framework correctly predict the GDP-in-joules / primary-energy-consumption relationship over 1860–2010?
+- **Reference environment for AI in a datacenter.** Open question. Power feed? Global energy mix? Datacenter waste-heat sink? The choice has consequences.
+
+### Honest risk to track
+
+**The convergence may come out conditional rather than universal.** The steps above may combine to give *"convergence under conditions X, Y, Z"* rather than *"max ∆N IS the compression identity universally."* That outcome is still a real paper — and arguably more defensible — but narrower than the slogan. Worth knowing in advance so the framing of the draft matches what the proof actually delivers.
+
+### Downstream operationalizations (deferred until foundation lands)
+
+Each becomes a candidate small paper once Phase 3 (convergence proof) is done:
+
+- Rapacity-ratio formalization (with @DrInsensitive cited as origin of the underlying concept)
+- Money-as-joule-estimator (Smil's data + zentropy framework)
+- Strauss-Howe zentropic reframing of generational cycles
+- ZenCoin "true neutral currency" design
+- The `implications.png` domain table: evolutionary biology, sociology, urban planning, ethics, philosophy, psychology, astrophysics
