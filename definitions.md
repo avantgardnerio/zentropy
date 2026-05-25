@@ -89,23 +89,58 @@ The light cone is the *theoretical maximum* — the limit of what an agent could
 
 ---
 
-## ∆N (preliminary)
+## ∆N — three distinct quantities (preliminary; to be tightened against keystone-paper apparatus)
 
-```
-∆N = change in N over an interval — i.e., change in actively harnessed exergy
-```
+> **TODO:** the framing below is intuited from first principles in conversation, not yet grounded in citations. Replace with the precise vocabulary from **England 2013** (individual-cell dynamics, dissipative adaptation) and **Still 2012** (memory-bearing predictive systems) once read. The keystone papers may compress these three quantities into one under stated conditions, or force a different decomposition entirely. Mark and revisit.
 
-`∆N > 0`: agent has begun harnessing what it wasn't before (capability deployment, new flows, phase transitions).
-`∆N ≈ 0`: stasis — current harnessing rate matches losses, no net expansion.
-`∆N < 0`: contraction — agent is losing access to previously-harnessed flows.
+When the framework says "∆N," it actually refers to three distinct quantities. The earlier slogan conflated them; the cleaner version separates them:
 
-**Working claim** (potential paper headline, defensible if it holds):
+| Symbol | What it is | Units |
+|---|---|---|
+| $N(t)$ | instantaneous harnessing *rate* at time $t$ | power (J/s) |
+| $\int_a^b N(t)\,dt$ | cumulative throughput over an interval | energy (J) |
+| $dN/dt$ | rate of change of harnessing rate — *does the coupling surface expand?* | J/s² |
 
-> **Life is defined by ∆N ≥ 0 over its lifetime.**
+### Four canonical scenarios
 
-Abiotic processes shuffle exergy *within* whatever coupling already exists; they don't *expand* coupling. Only replicating / evolving systems grow N. Therefore `∆N ≥ 0` is the **thermodynamic signature of life** — applies substrate-agnostically to cells, civilizations, AIs.
+- **Cell exists vs counterfactual void, at moment $t$:** $N(t) > 0$. The cell is actively harnessing; the void isn't. Individual-level signature of being alive.
+- **Coming into existence:** discrete event — $N$ jumps from $0$ to $N_\text{cell}$. During the formation interval $dN/dt > 0$; after formation, $dN/dt \approx 0$ until something else changes.
+- **Eating but not reproducing:** $N(t) > 0$ (alive at every moment), $dN/dt \approx 0$ (steady state), $\int N\,dt > 0$ (throughput accumulating). Alive at the individual level; not expanding the lineage.
+- **Lineage dies without descendants:** integrated $\Delta N$ over the lineage's full existence $\approx 0$ (emergence contribution exactly cancels death contribution). Not lineage-persisting.
 
-Precise integration measure (per-agent, per-lineage, per-light-cone) deferred until the convergence proof determines what shape ∆N needs to take.
+### Updated headline
+
+The earlier slogan *"Life ≡ ∆N ≥ 0"* was conflating individual-level and lineage-level signatures. The corrected version distinguishes:
+
+- **Individual-level "alive at moment $t$":** $N(t) > 0$. Active harnessing.
+- **Lineage-level "persists over time":** $dN/dt \ge 0$ averaged over the lineage's existence. At minimum replaces itself; ideally expands.
+- **Phase-transition event:** $dN/dt > 0$ spike when new capability or coupling comes online (first replicator emergence, aerobic gene unlock, fire, brains, language, industrial technology, AI).
+
+**Both readings are physically meaningful; neither subsumes the other.** A single cell that eats but doesn't reproduce is *alive* (individual-level positive throughput) but not *lineage-persisting* (no expansion). The framework needs both, marked explicitly.
+
+Precise integration measure (per-agent vs per-lineage vs per-light-cone, instantaneous vs cumulative, counterfactual baseline) still deferred until the keystone-paper apparatus pins down the right vocabulary.
+
+### Lineage scope is a modeling input
+
+The framework computes ∆N for a *specified* lineage (individual, family line, species, civilization, AI system, technology). Different scope choices yield different ∆N values for the *same physical event*. **The framework computes correctly given any choice; the choice itself is a modeling input the user supplies.** Picking the lineage is not a derivation — it is a specification.
+
+### Fleeting throughput vs sustained throughput (sanity check on naive +∆N intuitions)
+
+A common misreading of the framework: *"max ∆N = max instantaneous throughput, so burn all the oil ASAP."* This is wrong, and the three-quantity framework shows why.
+
+Compare a nuclear bomb to a nuclear power plant operating on the same nuclear fuel:
+
+| | Bomb event | Power plant |
+|---|---|---|
+| Peak $N(t)$ | enormous spike | moderate, sustained |
+| Duration | microseconds | decades |
+| Fraction of released exergy *captured as useful work* | small (most goes to uncontrolled waste heat) | large (~40–60% in modern designs) |
+| Post-event $N$ of surrounding infrastructure | zero (destroyed) | augmented (electricity feeds downstream harnessing) |
+| Cumulative $\int N(t)\,dt$ *of harnessed exergy* | small | large, compounding |
+
+The framework correctly favors the plant: **efficiency × duration dominates instantaneous peak.** Same logic rules out the "burn all the oil ASAP" intuition — fast combustion at low efficiency loses to slow combustion at high efficiency, and once burned the gradient is gone forever. **No morality required; the math itself disfavors fleeting wasteful spikes** because cumulative harnessed throughput, not instantaneous release, is what enters $\int N(t)\,dt$.
+
+This is consistent with the phase-transition ladder: every step (aerobic, multicellularity, brains, language, …) is primarily an *efficiency* upgrade. Selection favors higher capture-per-joule-dissipated, not higher dissipation per se.
 
 ---
 
@@ -196,6 +231,44 @@ The canonical academic treatment of these transitions is **Maynard Smith & Szath
 
 Each step is a coupling-expansion event. Each is $+\Delta N$ for the lineage that crosses it. The same Still + England chain handles all of them; the phase transitions are just the discrete events where the coupling surface expands.
 
+## The cycle that drives the ladder (the compression view)
+
+> **TODO:** intuited from first principles in conversation. Maps to Still 2012's $I_\text{mem}$ / $I_\text{pred}$ / $I_\text{nonpred}$ vocabulary; rigorous derivation pending the convergence proof. The cycle structure itself overlaps with Maynard Smith & Szathmáry (1995) on major transitions and Kauffman's "adjacent possible" — cite specifically once read in full.
+
+The phase-transition ladder isn't a list of accidents. It's the trace of a repeating cycle, driven by Still's bound applied at the population scale. Each transition follows the same shape:
+
+1. **Unconstrained regime:** new capability freshly unlocked. Lineage expands. *More dissipators* (plural-entity); selection weak; resources abundant.
+2. **Approach carrying capacity:** resources become finite. Selection pressure kicks in. The Still bound bites — bad predictors lose to better predictors at the per-cell level. Variation explores possibility space (gradient-biased by current population, not blind random search).
+3. **Innovation:** a variant unlocks a new coupling — aerobic respiration, multicellularity, brains, fire, language, electricity, AI. **Phase transition.**
+4. **Post-transition state:** the new coupling enables more exergy throughput per entity. **Fewer copies of more complex cells.** Total lineage $\int N(t)\,dt$ jumps dramatically; per-niche population may *decrease*; per-entity $\Delta N$ rises sharply.
+5. **Repeat.** New ceiling, new selection pressure, eventually a new unlock.
+
+### Why "fewer copies of more complex cells" is the signature
+
+This is the **compression view** of the cycle. A more complex cell is a *better compression algorithm* — larger $I_\text{mem}$ (more memory bits encoding environmental structure), but the additional complexity is *paid for* by larger $I_\text{pred}$ (more predictive information). The Still bound that bit at the per-cell level in step 2 of the previous cycle is satisfied by a *different point in the* $I_\text{mem}$ / $I_\text{pred}$ *plane* in step 4 of the new cycle: higher absolute memory, but the *ratio* $I_\text{pred} / I_\text{mem}$ has improved.
+
+The rule the cycle obeys:
+
+> **Selection accepts increased complexity only when predictive payoff exceeds the complexity cost.**
+
+| Cell type | $I_\text{mem}$ | $I_\text{pred}$ | $I_\text{nonpred}$ | Selected? |
+|---|---|---|---|---|
+| Simple anaerobic | small | small | small | yes (low cost, low capability) |
+| Bloated anaerobic (junk DNA) | medium | small | medium | **selected against — Still bites** |
+| Eukaryote with mitochondria | large | large | small | yes (complexity *justified* by prediction) |
+
+A phase transition happens when an innovation makes a previously-unfavorable region of the $I_\text{mem}$ / $I_\text{pred}$ plane suddenly favorable — because the new coupling massively increases extractable exergy per predictive bit.
+
+### Quantifiability
+
+| Tier | Quantification | Notes |
+|---|---|---|
+| **Conceptual** | yes, immediately | $I_\text{mem}$, $I_\text{pred}$, $I_\text{nonpred}$ are formally defined by Still 2012 |
+| **Idealized model systems** | yes, directly measurable | computational replicators with explicit state; this is England's lab domain |
+| **Real biological cells** | hard but proxy-able | metabolic efficiency (ATP/glucose), genome-to-functional-gene ratios, regulatory complexity per environmental dimension — biologists already measure these, just not in Still's vocabulary |
+
+**Empirical validation strategy:** show that selection trajectories in driven model systems (England-style computational replicators) actually do trace out the $I_\text{mem}$ / $I_\text{pred}$ trajectory the framework predicts. Coupled with biological proxies for the same quantities in real cells, this is the *experimental* arm of the convergence proof.
+
 ### Why this is the right test case
 
 - Clean physics — no "agency," no consciousness, no moral muddiness.
@@ -237,6 +310,33 @@ None of these connects the framing to *selection-by-thermodynamic-dissipation* (
 
 The honest catalog of what is *asserted* in this document and still requires *derivation* or *measurement* to become defensible. The discipline ([[memory/project-roadmap]]): read first, formalize second, prove third. Premature formalization is the failure mode.
 
+### Immediate next actions (the actionable plan)
+
+Three concrete steps in order, before committing to the convergence-proof derivation in earnest:
+
+1. **Literature search: has the Still ↔ England synthesis already been done?**
+   - Google Scholar *cited-by* intersection between Still 2012 and England 2013 / Perunov-Marsland-England 2014/2016 — surface any paper that draws on both
+   - Keyword searches: *"thermodynamics of prediction" + "dissipative adaptation"*; *"predictive information" + "self-replication"*; *"nonpredictive memory" + "selection"*
+   - Adjacent literatures worth probing: active inference / FEP applied to evolution (Friston, Ramstead); information theory of evolution (Christoph Adami); thermodynamics of computation in biology (David Wolpert, William Bialek); predictive coding + metabolic cost (Sterling & Laughlin, *Principles of Neural Design*, 2015)
+   - Expected outcome: a defensible *"to the best of our knowledge"* footnote for the eventual paper, OR an 18-month time-save if it already exists
+   - Approximately one weekend; do this *before* the deep reading
+
+2. **Read the keystone papers with the synthesis in mind.**
+   - **Still 2012** (in `papers/`): find the bound equation and what makes it tight
+   - **Perunov-Marsland-England 2014/2016** (in `papers/`): find Eq. 8 and what determines $\Psi - \Phi$
+   - **England 2013** (in `papers/`): find the self-replication bound and how it is derived
+   - Mark every step where the math could plausibly compose
+   - Extend `notation.md` as new symbols appear
+
+3. **Actually substitute the variables to connect them.**
+   - Start from Perunov-Marsland-England Eq. 8 (tug-of-war between internal entropy $\Delta \ln \Omega$, kinetic accessibility, average dissipation $\Psi$, and fluctuations $\Phi$)
+   - Substitute Still's bound for $\Psi$: $\Psi = \beta \langle W_\text{diss} \rangle \ge I_\text{mem} - I_\text{pred}$
+   - Restrict to the constrained regime: replace England's infinite-bath / unbounded-drive assumption with a finite-resource constraint
+   - See what falls out
+   - If the cycle structure / compression view appears as a derived consequence, the convergence proof is in hand. If not, identify exactly what's missing — that's the next research question.
+
+These three are concrete, time-boxed, and individually verifiable. Phase 3 of the [[memory/project-roadmap]] (the convergence proof) consists of working through them in order.
+
 ### Foundational definitions still owed
 
 - **Operational definition of N.** "Realized harnessing" is qualitative. The paper needs a single computable definition consistent across vent bacteria, humans, and AI systems. Candidate: *net exergy throughput crossing the agent's effective boundary per unit time, integrated over the period of interest.* Decide on the specific functional form and defend it.
@@ -244,12 +344,25 @@ The honest catalog of what is *asserted* in this document and still requires *de
 
 ### Theoretical claims asserted; not yet derived
 
-- **The convergence proof.** Show that max-∆N trajectories coincide with compression-identity-maximizing trajectories, *under stated conditions*, as a consequence of Still 2012 + England 2013. **Currently asserted throughout. Not yet derived.** This is the central theoretical contribution.
-- **Bridge Still's bound to replicator DNA.** Formally identify replicator structure as the "memory" that Still's framework applies to. Intuitively obvious; needs to be made formally precise.
-- **Bridge England's stochastic dynamics to Darwinian selection.** England's result biases *trajectory probabilities*; Darwinian selection requires *heritable variation + differential reproduction*. The bridge must be made explicit, or selection must be accepted as a side constraint. This is where critics already push on England's framework.
-- **Resolve the apparent Still ↔ England tension.** Still: better predictors dissipate *less*. England: selection favors *more* dissipators. Resolution likely runs through distinguishing **throughput** (gradient-absorption rate) from **efficiency** (work per joule dissipated). Make explicit in the proof, because it is not obvious from either paper alone.
-- **Connect compression to predictive information formally.** *"Compression of L(Ψ)"* and Still's *"predictive information"* share intuition but are technically distinct (Kolmogorov vs Shannon, lossless vs lossy, structural vs statistical). The convergence proof must formally bridge them.
-- **Substrate-agnosticism in the derivation.** Show the derivation generalizes to AI / memes / civilizations without modification. Likely easy once the biological case lands, because Still's bound is substrate-neutral.
+- **The convergence proof — three discrete steps** *(sharpened this session after reading Perunov-Marsland-England 2014/2016, which confirmed they do **not** compose with Still, do **not** address the constrained regime, and do **not** articulate the phase-transition cycle)*. The proof's structure:
+  1. **Compose Still 2012's bound with Perunov-Marsland-England Eq. 8.** Add Still's information-theoretic terms ($\beta \langle W_\text{diss} \rangle \ge I_\text{mem} - I_\text{pred}$) to England's tug-of-war ($\Delta \ln \Omega$ + kinetic accessibility + $\Delta \Psi - \Delta \Phi$). The composition is the load-bearing technical step — neither paper does it. England's Eq. 8 is the reusable machinery; Still's bound is the missing information-theoretic term.
+  2. **Restrict to the constrained regime.** In the unconstrained regime (England's home turf), Still's bound is universal but does not drive selection — waste is free. In the constrained regime, per-cycle nonpredictive memory becomes selection pressure. The proof's "stated conditions" should explicitly specify constraint. *Most real biology lives here; this is also the regime where the proof is tightest.*
+  3. **Show the cycle structure / compression view falls out.** Under (1) + (2), the four-phase cycle (expand → carrying-capacity-constraint → Still-bound-bites → innovation → phase transition → repeat) and the trajectory through the $I_\text{mem}$ / $I_\text{pred}$ plane during phase transitions (fewer-copies-of-more-complex-cells signature) should be **derived consequences**, not assumptions.
+
+  Final form: *"max-∆N trajectories coincide with compression-identity-maximizing trajectories in the constrained regime; the phase-transition cycle is a derived signature."*
+
+  Each step is discrete and reviewable on its own merits. Together they constitute the central theoretical contribution.
+
+- **Sub-claims subsumed by the three-step structure above** (kept for completeness — these were earlier formulations of pieces now consolidated):
+  - *Bridge Still's bound to replicator DNA:* identify replicator structure as Still's "memory." Part of step 1.
+  - *Bridge England's stochastic dynamics to Darwinian selection:* in the constrained regime, England's trajectory-bias becomes selection pressure via Still's bound. Part of step 2.
+  - *Resolve the apparent Still ↔ England tension:* largely resolved this session as artifact-of-layer-conflation. Still is per-system; England is population-level; they compose in the constrained regime. Throughput vs wastefulness is a secondary distinction.
+
+- **Still-open sub-claims (independent of the three-step structure):**
+  - **Connect compression to predictive information formally.** *"Compression of L(Ψ)"* (Brent's compression identity) and Still's *"predictive information"* share intuition but are technically distinct (Kolmogorov vs Shannon, lossless vs lossy, structural vs statistical). The proof must formally bridge them — this is partially orthogonal to the three steps and probably belongs in an appendix.
+  - **Substrate-agnosticism in the derivation.** Show the derivation generalizes to AI / memes / civilizations without modification. Likely easy once the biological case lands, because Still's bound and Perunov-Marsland-England's Eq. 8 are both substrate-neutral in their derivations.
+
+- **England's own gesture at the unification** (Perunov-Marsland-England 2014/2016, Discussion p. 22, *useful for the paper's framing*): *"if our system of interest turns out to be made of self-replicators, then the Darwinian account of adaptation and the thermodynamic one given here become one and the same."* He acknowledges the unification *could* be done; he does not do it. The convergence proof is exactly the paper England gestured at and did not write.
 
 ### Empirical claims requiring validation
 

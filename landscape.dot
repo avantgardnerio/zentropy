@@ -40,6 +40,7 @@ digraph zentropy_landscape {
     // ── Adjacent / synthesis attempts (white) ────────────────────────
     Friston10  [label="Friston 2010\nFEP as unified brain theory"];
     Schmidhuber [label="Schmidhuber 2010\ncompression-as-creativity"];
+    PerunovEng2016 [label="Perunov, Marsland, England 2016\nStatistical Physics of Adaptation\n(formal version of dissipative adaptation —\nconstrained-environment selection logic)"];
     ParrDaC    [label="Parr, Da Costa, Friston 2020\nMarkov blankets & stoch thermo"];
     Still20    [label="Still 2020\nCost & benefit of memory"];
     Ramstead   [label="Ramstead et al 2021\nBayesian Mechanics"];
@@ -75,7 +76,9 @@ digraph zentropy_landscape {
     // ── Edges: keystones to Zentropy ─────────────────────────────────
     Still12   -> Still20;
     Still12   -> Zentropy;
+    England13 -> PerunovEng2016;
     England13 -> Zentropy;
+    PerunovEng2016 -> Zentropy;
     Friston10 -> Friston13;
     Friston13 -> ParrDaC;
     Friston13 -> Zentropy;
