@@ -51,6 +51,73 @@ A working glossary mapping Greek letters, symbols, and key equations from the ze
 
 ---
 
+## Math operators and logical notation
+
+The general-purpose math symbols that appear constantly in stat-mech, information theory, and stochastic-dynamics papers. Not specific to any tradition — these are universal across mathematics and physics.
+
+### Relations and comparisons
+
+| Symbol | Read as | Meaning |
+|---|---|---|
+| `=` | "equals" | exact equality |
+| `≈` | "approximately equal to" | "approximately"; often used in limits or empirical fits |
+| `≡` | "is defined as" / "identically equal to" | strong equality, often used for *definitions* — `x ≡ y` reads "I am defining x to be y" |
+| `≫` | "much greater than" | regime shorthand: many orders of magnitude bigger. Common pattern: `ω ≫ 1/τ` means *"the drive oscillates many orders of magnitude faster than the system's relaxation timescale"* |
+| `≪` | "much less than" | complement of `≫` |
+| `∝` | "proportional to" | `y ∝ x` ≈ "y equals some constant times x"; the constant is unspecified |
+| `∞` | "infinity" | unbounded |
+| `→` | "approaches" / "maps to" | in limits: `x → 0` ≈ "as x approaches zero"; in function notation: `f: A → B` ≈ "f maps A to B" |
+
+### Set notation
+
+| Symbol | Read as | Meaning |
+|---|---|---|
+| `∈` | "is an element of" / "in" | `i ∈ {0, 1, 2}` ≈ "i is one of 0, 1, or 2" |
+| `∉` | "is not an element of" | complement of `∈` |
+| `⊂` | "is a proper subset of" | strict subset (A inside B and A ≠ B) |
+| `⊆` | "is a subset of (or equal)" | A inside B, possibly equal |
+| `∪` | "union" | combined elements of both sets |
+| `∩` | "intersection" | elements shared by both sets |
+| `∅` | "empty set" | the set with no elements |
+| `\|S\|` | "cardinality of S" / "size of S" | number of elements (for sets); also absolute value for scalars |
+
+### Logic
+
+| Symbol | Read as | Meaning |
+|---|---|---|
+| `∀` | "for all" / "for every" | universal quantifier |
+| `∃` | "there exists" | existential quantifier |
+| `¬` | "not" | logical negation |
+| `∧` | "and" | logical AND |
+| `∨` | "or" | logical OR (inclusive) |
+| `⇒` | "implies" | logical implication; `A ⇒ B` reads "A implies B" |
+| `⇔` | "if and only if" / "iff" | logical equivalence (both directions imply) |
+
+### Calculus and analysis
+
+| Symbol | Read as | Meaning |
+|---|---|---|
+| `d` | "derivative" | `df/dx` ≈ "derivative of f with respect to x" (one variable) |
+| `∂` | "partial derivative" / "del" | `∂f/∂x` ≈ "partial derivative of f w.r.t. x, holding other variables fixed" |
+| `∇` | "nabla" / "del" / "gradient" | gradient operator; `∇f` is the vector of all partial derivatives |
+| `∫` | "integral of" | `∫ f(x) dx` ≈ "integral of f over x" |
+| `∮` | "contour integral" | integral along a closed path |
+| `lim` | "limit" | `lim_{x→0}` ≈ "limit as x approaches 0" |
+| `Σ`, `Π` | (see Greek letters above) | summation, product |
+
+### Numerical / structural
+
+| Symbol | Read as | Meaning |
+|---|---|---|
+| `!` | "factorial" | `n!` = $n \cdot (n-1) \cdot (n-2) \cdots 1$ |
+| `\|x\|` | "absolute value of x" / "magnitude" | non-negative magnitude (for scalars); also cardinality for sets |
+| `‖x‖` | "norm of x" | generalized magnitude (for vectors, functions, operators) |
+| `⌊x⌋` | "floor of x" | greatest integer ≤ x |
+| `⌈x⌉` | "ceiling of x" | smallest integer ≥ x |
+| `mod` | "modulo" | `a mod b` ≈ "remainder of a divided by b" |
+
+---
+
 ## Other constants and notation
 
 ### $k_B$ — "kay-bee" or "kay sub bee" (Boltzmann constant)
