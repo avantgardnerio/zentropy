@@ -1,5 +1,11 @@
 # Zentropy — Working Definitions
 
+> **In a constrained environment, replicators that more losslessly encode their environment, win.**
+
+*(Brent's compressed thesis, foundation session. Lossy like `E = mc²` is lossy — every word unpacks into a citation in the eventual paper. "Encode their environment" → predictive information (Still 2012). "Win" → positive lineage-level ∆N (England 2013 + Perunov-Marsland-England 2016). "Constrained" → the regime where Still's bound becomes selection pressure, which is also where essentially all interesting biology has lived. See the convergence-proof structure in [Open Problems](#theoretical-claims-asserted-not-yet-derived) for the unpacking.)*
+
+---
+
 This file captures the formal definitions zentropy is converging on. Living document — will sharpen as the reading queue closes and each quantity is pinned down rigorously.
 
 **Scope** (locked, see `memory/feedback-science-only.md`): only physical and information-theoretic quantities as primitives — joules, bits, kelvins, time, distance, probability. Concepts like *agency, intention, consciousness, purpose, meaning, ethics* may not be assumed; they may, however, be *derived* from the dynamics. Reducing previously-metaphysical claims to physics is the long-term consilience goal — but only via derivation, never by primitive assumption.
