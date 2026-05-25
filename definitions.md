@@ -1,8 +1,31 @@
 # Zentropy — Working Definitions
 
+## Thesis statements
+
+**General zentropy** — the compass, the long-term claim, *not the subject of this document but the frame around it*:
+
+> **The universe wants to make copies of itself.**
+
+**Special zentropy** — the publishable artifact, *the subject of this document*:
+
 > **In a constrained environment, replicators that more losslessly encode their environment, win.**
 
-*(Brent's compressed thesis, foundation session. Lossy like `E = mc²` is lossy — every word unpacks into a citation in the eventual paper. "Encode their environment" → predictive information (Still 2012). "Win" → positive lineage-level ∆N (England 2013 + Perunov-Marsland-England 2016). "Constrained" → the regime where Still's bound becomes selection pressure, which is also where essentially all interesting biology has lived. See the convergence-proof structure in [Open Problems](#theoretical-claims-asserted-not-yet-derived) for the unpacking.)*
+*Brent's compressed theses, foundation session. Both are lossy like `E = mc²` is lossy — every word unpacks into a citation in the eventual paper.*
+
+Unpacking **Special** word by word:
+- *"encode their environment"* → predictive information (Still 2012, $I_\text{pred}$)
+- *"win"* → positive lineage-level ∆N (England 2013 + Perunov-Marsland-England 2014/2016)
+- *"constrained"* → the regime where Still's bound becomes selection pressure, which is also where essentially all interesting biology has lived
+- *"replicators"* → substrate-agnostic information patterns (cells, civilizations, AI, memes)
+
+Unpacking **General** non-teleologically:
+- *"wants"* → selection dynamics in driven non-equilibrium systems statistically favor configurations that persist
+- *"make copies"* → self-replicating dissipative structures persist; non-self-replicating ones dissipate and disappear
+- *"of itself"* → the surviving patterns are made of the same physics as everything else; "life" isn't a separate category, it's the dominant persistent expression of universal gradient-dissipation organization
+
+**Composition:** Special explains *within-replicator dynamics* (why some replicators outcompete others, given that they exist). General explains *why replicators exist at all* (the universe's organization selects for copying-things). Together: full framework at two scales, in two sentences.
+
+See [Open Problems](#theoretical-claims-asserted-not-yet-derived) for the convergence-proof structure that unpacks Special into actual derivable claims.
 
 ---
 
@@ -310,6 +333,28 @@ None of these connects the framing to *selection-by-thermodynamic-dissipation* (
 - The "realized vs potential" framing distinguishes zenergy from Kauffman's "adjacent possible" (potential) and from naive exergy (total). This is worth a paragraph in the paper.
 - "Life = ∆N ≥ 0" is a *physically testable* definition. If it holds, it's a paper headline.
 
+## Finding a collaborator (the Boltzmann-undergrad strategy)
+
+Parallel-trackable with the reading. The intuition is Brent's; the formalism fluency can be borrowed.
+
+**Target profile:** senior physics or applied-math undergrad with stochastic thermo + information theory under their belt, OR early-stage MS/PhD student looking for a side project. Faculty are busy and rarely take outsider collaborations; **students have time and need real problems for their CV.** The right student has the formalism fluency Brent lacks and no original research direction of their own — a near-perfect match.
+
+**Local options (Front Range):**
+
+- **CSU (Fort Collins)** — Physics, Applied Math, Biology, possibly CS. Search faculty pages for *biophysics, non-equilibrium thermo, stochastic processes, theoretical biology*. Then ask faculty about interested students.
+- **CU Boulder** (~1.5 hr) — much denser biophysics / complex-systems community; JILA, Santa Fe Institute affiliations.
+- **Santa Fe Institute** (~6 hr) — the spiritual home for cross-domain synthesis; explicitly funds outsiders / non-traditional researchers.
+
+**Pitch — avoid scaring strong candidates.** Do **not** lead with *"unified theory of life."* Lead with the narrow technical problem:
+
+> *"I'm composing Still 2012's PRL bound with England's dissipative-adaptation framework in the constrained regime. I have intuition and the literature mapped; I want a math-fluent collaborator to audit the derivation. Paid hourly or co-authorship. Concrete scope: read [3 papers], work through [3 equations], audit the chain that connects them. ~5–10 hrs/week over 3–6 months."*
+
+Specific, bounded, paid-or-co-authored. Filters out cranks via the math entry bar; signals to strong candidates that the work is real.
+
+**Where to post:** CSU / CU physics department grad-student boards, targeted emails to 1–2 faculty asking about interested students, physics-Twitter, SFI mailing lists.
+
+**Realistic timeline:** 1–3 months of casting. Parallel-trackable with the reading. The right collaborator at the right moment could compress the 12-month timeline to 6.
+
 ---
 
 ## Open problems (the TODO list)
@@ -370,7 +415,48 @@ These three are concrete, time-boxed, and individually verifiable. Phase 3 of th
 
 - **England's own gesture at the unification** (Perunov-Marsland-England 2014/2016, Discussion p. 22, *useful for the paper's framing*): *"if our system of interest turns out to be made of self-replicators, then the Darwinian account of adaptation and the thermodynamic one given here become one and the same."* He acknowledges the unification *could* be done; he does not do it. The convergence proof is exactly the paper England gestured at and did not write.
 
-### Empirical claims requiring validation
+### Simulation pillar — the third pillar of the convergence paper
+
+> **TODO:** scope, design, and implement. Parallel-trackable with the reading and derivation phases.
+
+The convergence paper has **three pillars**, matching the field's standard validation methodology:
+
+| Pillar | What it does | Field precedent |
+|---|---|---|
+| **Derivation** (math) | Compose Still + Perunov-Marsland-England Eq. 8 in the constrained regime; derive the convergence claim and the cycle structure as consequences | Crooks 1999, Jarzynski 1997, Still 2012, England 2013, Perunov-Marsland-England 2016 |
+| **Simulation** (code) | Thermodynamic toy world where convergence is demonstrated empirically in a fully-controlled non-biological substrate | Perunov-Marsland-England 2014 (hopping particle), Langton's CA work, Ray's *Tierra* (1991), Adami's *Avida* (1994+) |
+| **Empirical sanity check** (numbers) | Real biological / civilizational data is consistent with the framework's predicted orders of magnitude | England 2013 (E. coli parameters), Smil (GDP-in-joules) |
+
+A paper with all three is significantly harder to dismiss than one with just derivation. **Code is also the best honesty test for math** — if you cannot simulate it, you do not yet understand it.
+
+#### Simulation design sketch — "thermodynamic Game of Life"
+
+Conway's GoL with the features the framework requires actually implemented:
+
+| GoL has | Zentropy simulation needs |
+|---|---|
+| Deterministic local rules | Probabilistic transitions (stochasticity) |
+| No energy | Each transition has an energy cost (thermodynamics) |
+| Closed system | A driving field pumping exergy into the substrate (drive) |
+| No memory state | Explicit $I_\text{mem}$ / $I_\text{pred}$ state per agent (predictive bits) |
+| Unbounded grid | Finite resource constraint (the constrained regime, where Still's bound bites) |
+
+Initialize random replicators → run the dynamics → measure:
+- Population dynamics in the constrained regime
+- $I_\text{mem}$ / $I_\text{pred}$ trajectories per lineage
+- Per-cycle dissipation (does Still's bound hold empirically?)
+- Emergence of phase transitions (do innovations look like coupling-expansion events?)
+- The "fewer copies of more complex cells" signature (does it appear?)
+
+**If simulation reproduces these patterns:** direct empirical evidence the convergence proof is correct in a substrate Brent fully controls.
+
+**If it does not:** identifies the specific bug in either the proof or the simulation — also progress.
+
+**Bonus:** a non-biological substrate that reproduces the framework's predicted dynamics is *itself* empirical evidence for substrate-agnosticism. The substrate-agnostic claim stops being asserted and becomes *demonstrated*.
+
+**Scope estimate:** 3–6 months of evening coding for someone with Brent's skill set. Comparable in scale to the reading-and-derivation effort. **Parallel-trackable with reading** — can start now as a sandbox for understanding the math.
+
+### Empirical claims requiring validation (third pillar of the convergence paper)
 
 - **Compute ∆N for the canonical vent-bacteria case.** Make the worked example actually worked, in joule units, with citations to measurable data (vent temperature gradients, chemoautotroph biomass, replication rates).
 - **Compute ∆N for each phase transition** in the ladder (aerobic, multicellularity, brains, memetics, language, writing, industrial, AI). Compare against known empirical orders of magnitude.
