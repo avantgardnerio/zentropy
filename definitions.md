@@ -208,6 +208,43 @@ The framework correctly favors the plant: **efficiency × duration dominates ins
 
 This is consistent with the phase-transition ladder: every step (aerobic, multicellularity, brains, language, …) is primarily an *efficiency* upgrade. Selection favors higher capture-per-joule-dissipated, not higher dissipation per se.
 
+### ∆N — worked examples
+
+> **Modeling caveat — read before treating any specific example as a verdict.** The examples below are *modeling choices made for clarity*, not theorems. Each picks a specific boundary $R$, a specific time horizon, and a specific counterfactual; different choices may give different verdicts on the same physical event. By the framework's own definitions these examples ARE value-claims (∆N is a value function over physical configurations), but a value-claim being well-defined is not the same as a specific application being *correct* — modeling errors propagate, and the conditional cases below are especially sensitive to how the boundary and time horizon are chosen.
+>
+> Where these examples align with existing moral frameworks (biblical, utilitarian, virtue-ethical, etc.), the alignment admits two readings, and the framework commits to neither:
+>
+> - *(A)* Cumulative selection on moral memes over millennia may have biased surviving moral traditions toward predicting +∆N — moral systems that recommended structurally-productive actions persisted because their adherents persisted. Under this reading, alignment with old moral systems is *what the framework would predict*: those memes survived because they happened to track physics.
+> - *(B)* The alignment is coincidental and not framework-relevant.
+>
+> Neither alignment nor non-alignment with existing moral systems counts as evidence for or against the framework's correctness. The examples illustrate the framework's machinery, not its moral authority.
+
+**Unambiguous +∆N:**
+
+- *Photosynthesizing plant* — removes solar exergy from environment, builds biomass (predictive structure encoding *"this gradient enables growth"*). Counterfactual: same gradient without plant → photons scatter or warm soil; ∆N strongly positive.
+- *Working power plant* — sustained inbound flux from fuel, routed downstream as electricity. Counterfactual: fuel sits unburned; ∆N strongly positive over decades.
+- *Brain in active learning* — internal state updates to better predict environment, raising future $P_u$. Counterfactual: same brain not learning.
+
+**Lineage-level +∆N:**
+
+- *Child being born* — launches a new boundary that accumulates $\int N\,dt$ over its lifetime. Lineage scope: parent + descendants.
+- *Power tool adopted by users* — extends users' $P_u$ via mechanical $I_\text{pred}$ coupling. ∆N at the inventor-lineage scope reflects all downstream usage.
+- *Infrastructure with use* — roads, bridges, fiber — raises $P_u$ for many agents simultaneously; ∆N is the aggregate uplift across users.
+
+**$\Delta N \to 0$ (boundary dissolving or undeployed):**
+
+- *Body decaying after death* — boundary has dissolved; counterfactual abiotic decay takes over.
+- *Abandoned infrastructure* — slow material decay, no surplus enabled.
+- *Idle Dyson sphere* — existing but not intercepting photons; $N = 0$ regardless of capability (see [Realized, not potential](#realized-not-potential--the-critical-clarification)).
+
+**Conditional cases (where the framework gives a definite-but-IFF verdict):**
+
+- *House* — +∆N **IFF occupied**. Occupied → reduces inhabitant's $D_\text{basal}$ (shelter is a lower-energy way to maintain body temperature), enables higher $P_u$ within W. Unoccupied → slow-decay, no surplus enabled.
+- *Charity* — +∆N **IFF the recipient uses the transfer to expand their window** (storing capacity that later couples as current $I_\text{pred}$, or material storage that raises future $P_u$). Otherwise: resource transfer with overhead, net ~neutral.
+- *Education* — +∆N **IFF the knowledge couples to the learner's actual environment** (current $I_\text{pred}$); option value if it is latent $I_\text{pred}$ that may couple later; inert credentials in a mismatched environment are low-impact regardless of prestige.
+
+The conditional structure is the framework's most informative feature: many intuitively-productive actions are *conditional*, and the conditions are physically specifiable. Inhabited home ≠ vanity mansion; structurally-impactful charity ≠ resource shuffle; applied learning ≠ inert credentials. The framework predicts these distinctions from physics — restating the modeling caveat: from physics, not from moral assumption.
+
 ---
 
 ## The zentropy window — operational definition
