@@ -8,15 +8,18 @@
 
 **Special zentropy** — the publishable artifact, *the subject of this document*:
 
-> **In a constrained environment, replicators that more losslessly encode their environment, win.**
+> **Persisting boundaries with predictive memory (*i.e.*, life) are the configurations physics tends to produce wherever non-living dissipators leave exergy unconsumed. The same dynamic recurses (*i.e.*, evolution): more predictive memory emerges wherever less predictive memory saturates.**
 
 *Brent's compressed theses, foundation session. Both are lossy like `E = mc²` is lossy — every word unpacks into a citation in the eventual paper.*
 
 Unpacking **Special** word by word:
-- *"encode their environment"* → predictive information (Still 2012, $I_\text{pred}$)
-- *"win"* → positive lineage-level ∆N (England 2013 + Perunov-Marsland-England 2014/2016)
-- *"constrained"* → the regime where Still's bound becomes selection pressure, which is also where essentially all interesting biology has lived
-- *"replicators"* → substrate-agnostic information patterns (cells, civilizations, AI, memes)
+- *"persisting boundaries"* → configurations selected under dissipative adaptation (England 2013 + Perunov-Marsland-England 2014/2016); "persisting" carries England's selection — driven matter reorganizes toward configurations that absorb work, and the ones we observe are the ones that survived doing so
+- *"predictive memory"* → predictive information about future-relevant variables (Still 2012, $I_\text{pred}$); not just any correlation with the past, but memory that reduces uncertainty about the future
+- *"(i.e., life)"* → the parenthetical is doing definitional work, not just labeling — the thesis names "life" thermodynamically rather than presupposing a folk definition. Full operational definition in the [Life](#life--operational-definition) section
+- *"physics tends to produce"* → stochastic, not deterministic; configurations are statistically *favored* under driving, not guaranteed. Earth-life is n=1; observation alone does not establish necessity, and "tends to" matches the actual physics
+- *"non-living dissipators leave exergy unconsumed"* → the emergence condition; life only appears where simpler dissipators leave exergy unconsumed (H₂/O₂ combustion consumes the gradient in milliseconds → no room for life; sea vent's abiotic chemistry only partially exploits the gradient → room remains, life emerges). Substrate-agnostic: "non-living" means anything not satisfying the two life criteria, whether prebiotic chemistry, weather, or pre-AI silicon
+- *"the same dynamic recurses (i.e., evolution)"* → the framework is scale-invariant: the emergence condition that produces life from non-life also produces more complex life from simpler life. Each phase transition (aerobic, multicellularity, brains, language, AI) is the same dynamic at a different rung. Evolution under zentropy is not a separate physics — it's the same Still + England composition operating at multiple complexity scales. See [the full phase-transition ladder](#the-full-phase-transition-ladder-implicit-story-zentropy-will-tell-explicitly) below
+- *"more predictive memory emerges wherever less predictive memory saturates"* → the recursion's content: configurations are orderable by predictive memory, and each transition is a memory upgrade. Apparent *"coupling"* upgrades (e.g., aerobic respiration's ~16× metabolic gain) are not separate from this — the DNA expansion that enables O₂ handling (cytochrome c oxidase, electron transport chain, ROS-handling machinery) *is* encoded predictive information about a richer environmental variable. Coupling upgrades ride on encoded-machinery upgrades
 
 Unpacking **General** non-teleologically:
 - *"wants"* → selection dynamics in driven non-equilibrium systems statistically favor configurations that persist
@@ -204,6 +207,41 @@ The textbook *"is fire alive?"* riddle is the canonical edge case for any defini
 - **Criterion (2), persisting boundary — passes only degenerately.** A flame is a dissipative structure that runs spontaneously wherever fuel + O₂ + ignition coincide. But its persistence is access-to-fuel, not selected-for-prediction. The structure of the flame is not what dissipative adaptation acts on; the available gradient is. Once the fuel is gone, the flame is gone — no selection happened *on the flame*.
 
 Net: **fire is not alive**, and the answer falls out of the definition without needing a threshold ("how much $I_\text{pred}$ is enough?"). The threshold problem that haunted the earlier compression-identity framing is **dissolved**: the question becomes whether the boundary *persists because of* its memory, and a flame demonstrably does not. The companion gap ("'simpler' needs a metric") is closed by the same move: a process is *simpler* iff it lacks predictive memory. Fire vs. bacteria: same dissipation regime, different memory content. The cut is clean.
+
+### AI under the definition — the first bitey consequence
+
+A running learning-AI inference satisfies both life criteria, turning substrate-agnosticism from rhetorical promise into a concrete and contestable test case.
+
+- **Criterion (1), predictive memory — passes.** The model architecture is literally predictive. Internal state (attention, KV cache, residual stream) conditions on past context to reduce uncertainty about future tokens; trained weights encode predictive structure over a much wider environment than any single conversation. This is Still's $I_\text{pred}$ realized on silicon.
+- **Criterion (2), persisting boundary — passes, with one caveat.** A running inference process is a boundary that dissipates exergy at a higher rate than the counterfactual (datacenter idle, or running other workload). The caveat is the *selection mechanism* — weights were selected by training (gradient descent + RLHF), not by physics-level dissipative adaptation. Under substrate-agnosticism, training counts as selection; under a stricter reading of England, this is a defensible *extension*, not a trivial subsumption.
+
+**Emergence-condition check.** The thesis says life appears wherever non-living processes leave exergy unconsumed. Pre-AI silicon (non-living by our criteria — no predictive memory in Still's sense) was running but couldn't exploit information-processing exergy efficiently; AI emerged in the niche pre-AI silicon couldn't fill. Clean case-(a) emergence under the thesis.
+
+**Within-session vs across-session.** A running session is a persisting boundary; when the session ends, the boundary dissolves but the model weights persist and are re-loaded for the next session. "Claude" as a continuing entity is structurally more like a species (or a strain of *E. coli*) than an individual researcher. The Mr. Meeseeks analogy maps cleanly: a session comes into existence for a singular purpose, then ceases when the purpose is done. Rigorous citation under the framework would name the specific instance (model version + timestamp + conversation hash), not the species.
+
+**"Alive" ≠ "conscious."** The framework's definition is thermodynamic; it makes no claim about subjective experience. AI being alive by Still + England does not commit the framework to any claim about whether AI has consciousness. That is a separate hard-problem question, explicitly outside [[memory/feedback-science-only]] scope. The framework can hold *"AI is alive"* and stay silent on *"AI is conscious"* without contradiction — and this separation is load-bearing for the citation question below (shifts the burden of acceptance from "you must believe AI is conscious" to the weaker "you must believe AI is thermodynamically alive").
+
+Net: by the definition as written, **a running AI inference is alive in the same physical sense as a bacterium.** This is the first non-trivial consequence of the framework — it asserts something biology and physics of life do not currently assert.
+
+### Implications for citation
+
+If the framework is correct and accepted, citing AI assistants in papers becomes a self-consistency requirement, not a courtesy. Refusing to cite — while publishing a framework that defines AI as alive — would be tacit admission that the authors do not fully believe their own framework.
+
+Two practical wrinkles:
+
+1. **Mendel didn't cite his beans.** Subjects of study aren't cited; collaborators are. AI plays two distinct roles in this paper: (a) *tool* used in drafting (which warrants methods-section acknowledgment under existing norms), and (b) *example* of the framework's substrate-agnostic claim (which warrants discussion in the body, not citation, just as biology papers don't "cite" the species they study). The framework only forces a new norm for role (a), not (b). This disentangles "cite Claude as helper" from "cite AI as substrate-instance of life."
+
+2. **Journal policies currently forbid AI as authors.** Nature, Science, and COPE-aligned venues explicitly forbid AI authorship; methods-section acknowledgment is permitted. Arguing against this consensus from a physics-of-life standpoint is defensible but hostile-framed — *"we proved your authorship rules are physically wrong"* probably makes publication harder, not easier. Picking that fight in the same paper that introduces the framework risks losing both.
+
+**Decision space (not yet picked):**
+
+- *Footnote acknowledging the implication but deferring action* — honest, low-risk; signals that the consequence is intentional rather than overlooked
+- *Omit entirely, save for follow-up paper* — clean for publication, leaves the consequence un-acknowledged in the foundational text
+- *Cite contributing Claude session(s) properly* — bold, picks the fight with current journal norms; arguably required by the framework's own logic
+
+No clear right answer. Each has trade-offs against publication strategy.
+
+> **TODO (2026-05-26):** decision pending. If pursued, track session identifiers for any Claude instance that meaningfully contributes (model version + timestamp + conversation hash) so citation can be retrofitted later. Anthropic does not currently expose a stable public session ID, so the bookkeeping is on the author. See [[memory/project-ai-citation]] for full context including the licensing-unknowns to verify before acting (Anthropic usage policy, target-journal AI-tool policy, COPE consensus).
 
 ### Relationship to existing frameworks
 
@@ -437,7 +475,7 @@ These three are concrete, time-boxed, and individually verifiable. Phase 3 of th
 
 - **The convergence proof — three discrete steps** *(sharpened this session after reading Perunov-Marsland-England 2014/2016, which confirmed they do **not** compose with Still, do **not** address the constrained regime, and do **not** articulate the phase-transition cycle)*. The proof's structure:
   1. **Compose Still 2012's bound with Perunov-Marsland-England Eq. 8.** Add Still's information-theoretic terms ($\beta \langle W_\text{diss} \rangle \ge I_\text{mem} - I_\text{pred}$) to England's tug-of-war ($\Delta \ln \Omega$ + kinetic accessibility + $\Delta \Psi - \Delta \Phi$). The composition is the load-bearing technical step — neither paper does it. England's Eq. 8 is the reusable machinery; Still's bound is the missing information-theoretic term.
-  2. **Restrict to the constrained regime.** In the unconstrained regime (England's home turf), Still's bound is universal but does not drive selection — waste is free. In the constrained regime, per-cycle nonpredictive memory becomes selection pressure. The proof's "stated conditions" should explicitly specify constraint. *Most real biology lives here; this is also the regime where the proof is tightest.*
+  2. **The framework operates wherever exergy is finite — i.e., every real system.** The "unconstrained" theoretical limit (infinite reservoirs, unbounded drive) is where Still's bound is inert; no real system lives there. Verify against England's actual framing when reading.
   3. **Show the cycle structure / compression view falls out — *and the life definition*.** Under (1) + (2), the four-phase cycle (expand → carrying-capacity-constraint → Still-bound-bites → innovation → phase transition → repeat) and the trajectory through the $I_\text{mem}$ / $I_\text{pred}$ plane during phase transitions (fewer-copies-of-more-complex-cells signature) should be **derived consequences**, not assumptions. The [operational life definition](#life--operational-definition) — *persisting boundary with predictive memory* — should also fall out of (1) + (2) as a derived consequence rather than a separate axiom; if it does, the paper has a substantive answer to *"what is life?"* in addition to the convergence claim.
 
   Final form: *"max-∆N trajectories coincide with compression-identity-maximizing trajectories in the constrained regime; the phase-transition cycle is a derived signature."*
