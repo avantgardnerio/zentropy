@@ -41,11 +41,12 @@ This file captures the formal definitions zentropy is converging on. Living docu
 ## The core quantity: N (a.k.a. *zenergy*)
 
 ```
-N(t) := exergy presently being harnessed by an agent or lineage at time t,
-        within the forward light cone
+N(R, t) := inbound exergy flux across the boundary of R at time t
+         = rate at which R removes exergy from its environment
+         within R's forward light cone
 ```
 
-Units: joules.
+Units: J/s (instantaneous rate); J for the cumulative $\int N(R, t)\,dt$ over a chosen period. R is the chosen integration boundary (cell, organism, lineage, civilization, AI session — observer-supplied per [Lineage scope is a modeling input](#lineage-scope-is-a-modeling-input)).
 
 **Project shorthand:** *zenergy* (Brent's coinage, foundation session). Pairs with zentropy: zentropy is the framework; zenergy is its core quantity.
 
@@ -78,6 +79,39 @@ Capability and actual harnessing are different. A Dyson sphere that *exists but 
 - N depends on **active activity**, not just existence or capability. A sleeping organism has lower N than an awake one. An idle datacenter has lower N than an active one. A civilization in stasis has ∆N = 0 even with technological capacity for more.
 - This is *fine* — it sharpens the "∆N > 0 ⇔ life-like activity" claim, since active life HAS active flows.
 - Capability expansion *enables* future ∆N, but doesn't itself constitute ∆N. The +∆N event is the actual deployment / new harnessing activity.
+
+### The N partition — what happens to harnessed exergy
+
+By energy conservation at R's boundary, the inbound exergy flux $N$ partitions into three terms:
+
+$$N(R, t) \;=\; D_\text{boundary}(R, t) \;+\; \dot{E}_\text{stored}(R, t) \;+\; D_\text{downstream}(R, t)$$
+
+- $D_\text{boundary}$: rate at which R dissipates exergy as heat *at its own boundary* (the second-law tax of maintaining structure)
+- $\dot{E}_\text{stored}$: rate at which R accumulates exergy in its structure (biomass, ATP, capital, encoded predictive structure)
+- $D_\text{downstream}$: rate at which R routes exergy to other systems (electricity exported, ATP shared with neighbor cells, manufactured goods, computational outputs)
+
+**What R does with the harnessed exergy is downstream of N itself.** The four agent states map cleanly:
+
+| Agent state | Description | Dominant partition term |
+|---|---|---|
+| Steady (eat = poop) | Maintenance | $N \approx D_\text{boundary}$ |
+| Routing (export ATP, electricity, products) | Productive contributor | $N \approx D_\text{downstream}$ |
+| Growing (biomass, capital, latent predictive structure) | Accumulating | $N \approx \dot{E}_\text{stored}$ |
+| Dying (consuming reserves) | Net consumer | $H \approx 0$, $\dot{E}_\text{stored} < 0$ |
+
+A "parasite" case ($R$ takes exergy from a neighbor agent rather than from the abiotic environment) is the same partition at the *agent* scope but $N \approx 0$ at the *system* scope (no new exergy entered the system; rearrangement only). Both scopes are physically meaningful — picking the scope is a modeling choice, not a derivation.
+
+### Harnessed vs. dissipated — reconciling two framings
+
+The doc's earlier sketches sometimes used *"exergy harnessed"* and sometimes *"dissipation rate"* interchangeably. The N partition resolves them:
+
+- **Harnessed** = $N$ (inbound flux, primary definition)
+- **Dissipated at boundary** = $D_\text{boundary}$ (one term in the partition)
+- **Total dissipation eventually caused by R** = $D_\text{boundary} + D_\text{downstream}$ + (eventual decay of stored) — over R's full lifetime this equals $\int N\,dt$, since whatever R harnessed eventually dissipates somewhere
+
+At steady state and lifetime-integrated, harnessed and dissipated converge ($\int N\,dt = \int D_\text{total}\,dt$). They differ *instantaneously* when R is growing ($\dot{E}_\text{stored} > 0$) or dying ($\dot{E}_\text{stored} < 0$). Harnessed is the primary measurement because it captures the *gradient-removal* event regardless of fate; dissipation is a downstream sub-case.
+
+This matters for the emergence condition in the thesis. *"Non-living dissipators leave exergy unconsumed"* — *consumed* here means *removed from the available pool*, i.e., $H$. A non-life configuration that harnesses and stores still counts as having consumed exergy (it's gone from the pool). Harnessed is the right measure.
 
 ---
 
@@ -173,6 +207,49 @@ Compare a nuclear bomb to a nuclear power plant operating on the same nuclear fu
 The framework correctly favors the plant: **efficiency × duration dominates instantaneous peak.** Same logic rules out the "burn all the oil ASAP" intuition — fast combustion at low efficiency loses to slow combustion at high efficiency, and once burned the gradient is gone forever. **No morality required; the math itself disfavors fleeting wasteful spikes** because cumulative harnessed throughput, not instantaneous release, is what enters $\int N(t)\,dt$.
 
 This is consistent with the phase-transition ladder: every step (aerobic, multicellularity, brains, language, …) is primarily an *efficiency* upgrade. Selection favors higher capture-per-joule-dissipated, not higher dissipation per se.
+
+---
+
+## The zentropy window — operational definition
+
+The *zentropy window* $W(R, t)$ is the operational range of inbound flux $N$ within which $R$ persists with nonzero surplus:
+
+$$W(R, t) \;:=\; [P_l(t),\, P_u(t)]$$
+
+- $P_l(t) = D_\text{basal}(R, t)$ — minimum inbound flux required to replace boundary dissipation. Sustained $N < P_l$ exhausts $E_\text{stored}$ and R's boundary dissolves.
+- $P_u(t) = H_\text{max}(R, t)$ — maximum inbound flux compatible with R's predictive coupling $I_\text{pred}(R;\,\text{R's actual environment})$ to its environment.
+- *Width:* $P_u - P_l$ = surplus inbound flux, available as $\dot{E}_\text{stored} + D_\text{downstream}$.
+
+$R$ is within the window when $N(R, t) \in W$; below it when consuming reserves; at $P_u$ when at its current maximum given $I_\text{pred}$.
+
+### Time evolution of the bounds
+
+- $P_u$ depends on $I_\text{pred}(R)$ relative to R's actual environment. $I_\text{pred}$ rises via selection on R's lineage across generations, and — in memory-bearing R — via internal state updates within a lifetime. Both mechanisms raise $P_u$.
+- $P_l$ depends on the local exergy distribution between R and other configurations sharing the gradient. As neighboring configurations' aggregate harnessing saturates the gradient, less of it remains accessible to R; the inbound flux required to overcome boundary dissipation rises.
+
+The continuously-rising floor is the same phenomenon as the thesis recursion clause: when less-predictive configurations saturate available exergy, only configurations with higher $I_\text{pred}$ retain $P_u > P_l$ and persist.
+
+### Surplus and latent predictive structure
+
+Surplus $P_u - P_l$ flows to $\dot{E}_\text{stored}$ and/or $D_\text{downstream}$. $\dot{E}_\text{stored}$ has two physically distinct forms:
+
+1. *Material* — biomass, capital, infrastructure encoded in R's structure
+2. *Predictive* — internal state correlating with environmental variables; *current* $I_\text{pred}$ if the correlation is with R's actual environment, *latent* $I_\text{pred}$ if the correlation is with variables not currently present
+
+Configurations with $W$ wide enough to support nonzero predictive $\dot{E}_\text{stored}$ accumulate latent structure beyond the predictive coupling required by the current environment. If the environment shifts, latent structure can become current $I_\text{pred}$ — $P_u$ in the changed environment remains above $P_l$ and R persists. Configurations whose $W$ supports only material storage and immediate dissipation lack this capacity; environmental shifts can drop their $I_\text{pred}$ to zero, collapsing $P_u$ below $P_l$ and ending persistence.
+
+This accounts for niche-transition survival from surplus allocation alone — no reference to motivation, foresight, or selection-for-future-environments required.
+
+### Absolute bounds
+
+The personal window $[P_l, P_u]$ sits inside the absolute bounds set by physics independent of $R$:
+
+- $U(t)$: total gradient available at time $t$ (England 2013)
+- $L(t)$: minimum dissipation any persisting boundary in R's environment must produce
+
+$L(t) \leq P_l(t) \leq P_u(t) \leq U(t)$ at all times. The outer width $U - L$ is fixed by the environment; the inner width $P_u - P_l$ depends on $I_\text{pred}(R)$ and on neighboring configurations' harnessing.
+
+> **TODO:** the *current* vs *latent* $I_\text{pred}$ distinction is operative here but not formalized. The convergence proof needs to address it; downstream applications (AI training, education, curiosity-driven learning) depend on it.
 
 ---
 
@@ -466,10 +543,20 @@ Three concrete steps in order, before committing to the convergence-proof deriva
 
 These three are concrete, time-boxed, and individually verifiable. Phase 3 of the [[memory/project-roadmap]] (the convergence proof) consists of working through them in order.
 
-### Foundational definitions still owed
+### Foundational definitions
 
-- **Operational definition of N.** "Realized harnessing" is qualitative. The paper needs a single computable definition consistent across vent bacteria, humans, and AI systems. Candidate: *net exergy throughput crossing the agent's effective boundary per unit time, integrated over the period of interest.* Decide on the specific functional form and defend it.
-- **Operational definition of ∆N.** Specify: integration measure (per-agent? per-lineage? per-light-cone slice?), counterfactual baseline (likely England-style passive trajectories of the same medium), lineage-branching treatment (sum over descendants?), and what *"persistent"* formally requires.
+**Delivered (closed this session, 2026-05-26):**
+
+- **Operational definition of $N$.** $N(R, t)$ = inbound exergy flux across the boundary of $R$ at time $t$, in J/s. Three-term partition $N = D_\text{boundary} + \dot{E}_\text{stored} + D_\text{downstream}$ clarifies the harnessed-vs-dissipated distinction (harnessed = primary; dissipation-at-boundary = one term in the partition). See [The core quantity: N](#the-core-quantity-n-aka-zenergy).
+- **Operational definition of $\Delta N$.** $\Delta N(R, t) = N(R, t) - N_\text{counterfactual}(R, t)$ where the counterfactual is *same gradient with R absent*. Three-quantity decomposition (instantaneous rate $N(t)$, cumulative integral $\int N\,dt$, rate-of-change $dN/dt$) covers temporal forms. **"Persistence" is not zentropy's responsibility** — it's England's, which we cite; zentropy integrates $N$ over whatever lifetime the boundary has.
+- **Operational definition of life.** *Persisting boundary with predictive memory* — two-criterion composition of Still + England. See [Life](#life--operational-definition).
+- **Operational definition of the zentropy window.** $W(R, t) = [P_l(t),\, P_u(t)]$ with $P_l = D_\text{basal}$ and $P_u = H_\text{max}$ given $R$'s $I_\text{pred}$ relative to its actual environment. See [The zentropy window](#the-zentropy-window--operational-definition).
+
+**Still owed:**
+
+- **Formal derivation of the $N \leftrightarrow I_\text{pred}$ relationship.** The operational quantities are computable; the formal proof that $dN/dI_\text{pred} > 0$ in the relevant regime (and the specific functional form) is the convergence proof's content. See [Theoretical claims asserted; not yet derived](#theoretical-claims-asserted-not-yet-derived).
+- **Current vs. latent $I_\text{pred}$ distinction.** Operative in the window math (latent predictive structure as the substrate for niche-transition survival) but not formalized. The convergence proof will need to address it; downstream applications (AI training, education, curiosity-driven learning) depend on it.
+- **"Simpler dissipators" metric.** Used in the thesis; relies on the *"simpler = lacks predictive memory"* metric. Informally argued, not formally derived — will close as a sub-task of the convergence proof's $I_\text{pred}$-ordering work.
 
 ### Theoretical claims asserted; not yet derived
 
