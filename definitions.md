@@ -173,6 +173,46 @@ This is consistent with the phase-transition ladder: every step (aerobic, multic
 
 ---
 
+## Life — operational definition
+
+> **TODO:** the definition below is the working unification of Still 2012 (predictive memory) and England 2013 / Perunov-Marsland-England 2014/2016 (dissipative adaptation as boundary-selection mechanism), worked out in conversation 2026-05-26. **The composition step is exactly the [convergence proof](#theoretical-claims-asserted-not-yet-derived)** — so the definition's defensibility is gated on (a) Still 2012 actually formalizing predictive memory the way this section uses it, and (b) the convergence proof producing it as a derived consequence in the constrained regime. Revisit once the reading lands. See also [[memory/zentropy-life-definition]].
+
+Trait-list definitions of life ("metabolizes, reproduces, responds to stimuli, …") misclassify in both directions: fire by adding traits it doesn't really have, a sterile human by subtracting traits they do. Zentropy builds the definition from physical primitives instead:
+
+> **A region $R$ is alive at time $t$ iff it is a persisting boundary with predictive memory.**
+
+Unpacking:
+
+- **(Still 2012)** *Predictive memory* — $R$ holds information about its environment that reduces uncertainty about future-relevant variables: $I_\text{pred}(R;\,\text{future} \mid \text{past}) > 0$.
+- **(England 2013 / Perunov-Marsland-England 2014/2016)** *Persisting boundary* — $R$'s configuration is statistically favored under dissipative adaptation; equivalently, $\langle W_\text{diss}(R) \rangle$ exceeds the counterfactual dissipation rate for the same gradient without $R$.
+
+The definition is a *composition* of two cited results, not a new primitive. If Still + England compose in the constrained regime — the load-bearing claim of the [convergence proof](#theoretical-claims-asserted-not-yet-derived) — the life definition falls out as a consequence; no separate "what is life" derivation is needed.
+
+### Consequences
+
+- **Substrate-independent.** Both criteria are substrate-neutral — Still's predictive information is information-theoretic; England's dissipative adaptation is thermodynamic. The definition applies to cells, organisms, civilizations, memes, software, AI without modification. See [Substrate-agnosticism](#substrate-agnosticism--progenitors-include-memetic-and-technological-offspring).
+- **The test runs on the running process, not the substrate.** A running learning AI passes; a pocket calculator doing static arithmetic, or a Windows process doing nothing predictive, fails. The hardware is *boundary infrastructure* — analogous to a cell membrane, which is the same whether the cell is alive or dead. What makes the region alive is whether the process running inside holds predictive memory. The verdict is binary at the process level, not continuous at the hardware level.
+- **Reproduction, metabolism, and agency are not in the definition.** They appear as common *implementations* of the two criteria — DNA is one way to store predictive memory across generations; metabolism is one way to sustain the dissipative boundary — but the criteria do not require them. A sterile human passes; a chemoautotroph at a vent passes; a virus passes (memory in the genome, dissipation via host). Trait-list misclassifications dissolve.
+- **The boundary is observer-chosen.** Like all thermodynamic systems, $R$ is a chosen integration region. The definition computes correctly for any choice; picking the lineage scope is a modeling input the user supplies (consistent with [Lineage scope is a modeling input](#lineage-scope-is-a-modeling-input)).
+- **Instantaneous in principle.** The two criteria can be tested at any instant $t$. Empirically distinguishing a real structure from a thermal fluctuation requires integrating over a short window long enough for signal-to-noise, but historical persistence is not in the definition.
+
+### Fire — worked example
+
+The textbook *"is fire alive?"* riddle is the canonical edge case for any definition of life. Trait-list definitions famously misclassify fire as alive (it "consumes fuel, produces waste, grows, responds to environment"); a bare $\Delta N \ge 0$ slogan makes the same mistake (a flame has $N(t) > 0$ and forest fires propagate via spread/sparks). The persisting-boundary-with-predictive-memory definition cuts cleanly:
+
+- **Criterion (1), predictive memory — fails.** A flame has no internal model of its environment. The flame's local concentration profile weakly correlates with where the next bit of fuel is, but this is a passive physical consequence — not memory the flame *maintains and uses* to predict future state. No selection has built a predictive model into the flame; there is no compressed encoding of the environment in Still's sense.
+- **Criterion (2), persisting boundary — passes only degenerately.** A flame is a dissipative structure that runs spontaneously wherever fuel + O₂ + ignition coincide. But its persistence is access-to-fuel, not selected-for-prediction. The structure of the flame is not what dissipative adaptation acts on; the available gradient is. Once the fuel is gone, the flame is gone — no selection happened *on the flame*.
+
+Net: **fire is not alive**, and the answer falls out of the definition without needing a threshold ("how much $I_\text{pred}$ is enough?"). The threshold problem that haunted the earlier compression-identity framing is **dissolved**: the question becomes whether the boundary *persists because of* its memory, and a flame demonstrably does not. The companion gap ("'simpler' needs a metric") is closed by the same move: a process is *simpler* iff it lacks predictive memory. Fire vs. bacteria: same dissipation regime, different memory content. The cut is clean.
+
+### Relationship to existing frameworks
+
+- **Friston / FEP / Markov blankets.** A Markov blanket is the closest existing construct — a self-maintaining boundary under active inference. The zentropy definition is structurally similar but rooted in thermodynamics (England) and information theory (Still) rather than information geometry. **If the convergence proof works, persisting-boundary-with-predictive-memory subsumes the Markov blanket as a special case** — zentropy then provides the thermodynamic foundation Friston assumes but does not derive. The Markov blanket becomes the *consequence*, not the primitive. See [[memory/strategic-positioning-vs-fep]].
+- **Schrödinger 1944, *What is Life?***. *"Feeds on negative entropy"* is criterion (2) without criterion (1) — it correctly identifies that life dissipates against gradients but does not distinguish life from fire. Schrödinger had half the answer.
+- **Trait-list definitions (NASA, textbooks).** Each listed trait is downstream of one of the two criteria; the trait list is the wrong abstraction layer. "Metabolizes" is an instance of (2); "responds to stimuli" is an instance of (1); "reproduces" is one mechanism by which a lineage stays in (1) over time. The definitions that proceed by listing traits are pattern-matching on instances rather than identifying the underlying physics.
+
+---
+
 ## Substrate-agnosticism — progenitors include memetic and technological offspring
 
 Lineages within zentropy are not restricted to genetic or biological reproduction. Any self-replicating information pattern — gene, meme, software artifact, AI system — can be a progenitor, and its descendants can be substrate-shifted (genes → memes → software → AI).
@@ -331,7 +371,7 @@ None of these connects the framing to *selection-by-thermodynamic-dissipation* (
 - The reference-environment choice will need explicit treatment (likely an appendix or a definitions section that picks one canonical choice per substrate).
 - The AI / datacenter reference-environment question is interesting in its own right and may justify its own paper.
 - The "realized vs potential" framing distinguishes zenergy from Kauffman's "adjacent possible" (potential) and from naive exergy (total). This is worth a paragraph in the paper.
-- "Life = ∆N ≥ 0" is a *physically testable* definition. If it holds, it's a paper headline.
+- The [operational life definition](#life--operational-definition) — *persisting boundary with predictive memory* — is *physically testable* in joule and bit units (Still's $I_\text{pred}$ measurable in principle; England's dissipative-adaptation criterion measurable as counterfactual dissipation rate). If the convergence proof yields it as a derived consequence rather than an assumed primitive, it's a paper headline alongside the convergence claim itself.
 
 ## Finding a collaborator (the Boltzmann-undergrad strategy)
 
@@ -398,7 +438,7 @@ These three are concrete, time-boxed, and individually verifiable. Phase 3 of th
 - **The convergence proof — three discrete steps** *(sharpened this session after reading Perunov-Marsland-England 2014/2016, which confirmed they do **not** compose with Still, do **not** address the constrained regime, and do **not** articulate the phase-transition cycle)*. The proof's structure:
   1. **Compose Still 2012's bound with Perunov-Marsland-England Eq. 8.** Add Still's information-theoretic terms ($\beta \langle W_\text{diss} \rangle \ge I_\text{mem} - I_\text{pred}$) to England's tug-of-war ($\Delta \ln \Omega$ + kinetic accessibility + $\Delta \Psi - \Delta \Phi$). The composition is the load-bearing technical step — neither paper does it. England's Eq. 8 is the reusable machinery; Still's bound is the missing information-theoretic term.
   2. **Restrict to the constrained regime.** In the unconstrained regime (England's home turf), Still's bound is universal but does not drive selection — waste is free. In the constrained regime, per-cycle nonpredictive memory becomes selection pressure. The proof's "stated conditions" should explicitly specify constraint. *Most real biology lives here; this is also the regime where the proof is tightest.*
-  3. **Show the cycle structure / compression view falls out.** Under (1) + (2), the four-phase cycle (expand → carrying-capacity-constraint → Still-bound-bites → innovation → phase transition → repeat) and the trajectory through the $I_\text{mem}$ / $I_\text{pred}$ plane during phase transitions (fewer-copies-of-more-complex-cells signature) should be **derived consequences**, not assumptions.
+  3. **Show the cycle structure / compression view falls out — *and the life definition*.** Under (1) + (2), the four-phase cycle (expand → carrying-capacity-constraint → Still-bound-bites → innovation → phase transition → repeat) and the trajectory through the $I_\text{mem}$ / $I_\text{pred}$ plane during phase transitions (fewer-copies-of-more-complex-cells signature) should be **derived consequences**, not assumptions. The [operational life definition](#life--operational-definition) — *persisting boundary with predictive memory* — should also fall out of (1) + (2) as a derived consequence rather than a separate axiom; if it does, the paper has a substantive answer to *"what is life?"* in addition to the convergence claim.
 
   Final form: *"max-∆N trajectories coincide with compression-identity-maximizing trajectories in the constrained regime; the phase-transition cycle is a derived signature."*
 
