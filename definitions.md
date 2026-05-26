@@ -113,6 +113,21 @@ At steady state and lifetime-integrated, harnessed and dissipated converge ($\in
 
 This matters for the emergence condition in the thesis. *"Non-living dissipators leave exergy unconsumed"* — *consumed* here means *removed from the available pool*, i.e., $H$. A non-life configuration that harnesses and stores still counts as having consumed exergy (it's gone from the pool). Harnessed is the right measure.
 
+### Why the value function is max H, not max instantaneous D
+
+Two candidate value functions appear available: maximize dissipation ($D$) or maximize harnessing ($H$). The framework's value function is **max H with productive storage**, and the reason is selection, not preference:
+
+- Increasing **H with storage** — banking surplus as deployable capacity — builds the capacity to persist and to grow cumulative harnessing. Selected *for*.
+- Increasing **instantaneous $D_\text{boundary}$** — dissipating everything at the boundary now — builds nothing. That is fire. Not selected for.
+
+So life maximizes $H$ because *storing harnessed exergy as deployable capacity is what persistence and growth are made of.* **Productive storage** takes physically distinct forms: energy reserves (ATP, fat), food, fuel, capital, infrastructure, and — the form that drives the recursion — bits of predictive information ($I_\text{pred}$, including latent $I_\text{pred}$).
+
+This does not oppose the second law. The max-$H$ lineage dissipates *more* than the burn-now alternative — just later and distributed across a larger or longer-lived structure. Instantaneous boundary-$D$ and lineage-cumulative-$D$ diverge: burn-now maximizes the former and minimizes the latter (gradient gone, nothing built); harness-and-store does the reverse. Selection-for-persistence (proximate) → max-$H$-with-storage (agent strategy) → max-cumulative-$D$ (thermodynamic consequence). Max-instantaneous-$D$ is the losing strategy, not a rival objective.
+
+**Growth or replication, indifferently.** Cumulative lineage-$H$ grows whether the lineage gets bigger as one entity or copies into many — the framework privileges neither. Biology *defaults* to replication only because cells hit hard scaling limits (surface-to-volume, structural integrity, diffusion times), so copying is the only way to keep growing total $H$ past individual-size limits. Substrates without those limits (AI across hardware, a civilization, a fungal network) can grow instead. Replication is a substrate-contingent implementation of "grow cumulative $H$," not a physical requirement — consistent with the [life definition](#life--operational-definition), which also does not require reproduction.
+
+**Caveat:** "productive" is load-bearing. Storage that never deploys — latent $I_\text{pred}$ that never couples, reserves never drawn on — builds no capacity and improves nothing. The precise claim is *max H with productive storage*, the same conditional structure as the house/charity cases in the [∆N worked examples](#n--worked-examples).
+
 ---
 
 ## Why a reference environment is required
