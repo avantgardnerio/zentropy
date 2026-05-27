@@ -317,6 +317,8 @@ $R$ is within the window when $N(R, t) \in W$; below it when consuming reserves;
 
 The continuously-rising floor is the same phenomenon as the thesis recursion clause: when less-predictive configurations saturate available exergy, only configurations with higher $I_\text{pred}$ retain $P_u > P_l$ and persist.
 
+**Two levers, one test.** A configuration widens its window either by raising $P_u$ (better $I_\text{pred}$ → couple to more exergy) or by lowering $P_l$ (cut $D_\text{basal}$, or suppress competitors so less gradient is pre-empted). Both are favored *only insofar as the freed surplus is reinvested into cumulative throughput*. Lowering $P_l$ is not degenerate in itself — streamlined genomes (*Prochlorococcus*, obligate endosymbionts) win exactly this way, converting efficiency into faster replication. The degenerate case is narrower: lower $P_l$ — especially by killing competitors — then *fail to expand into the freed gradient*. The unconsumed exergy is, by the framework's own emergence condition, the opening a new dissipator arises to exploit; the efficient-miser/coasting-monopolist manufactures the niche of its own successor. Selected against not because "more dissipation is better," but because under-consumed exergy is competitively unstable.
+
 ### Surplus and latent predictive structure
 
 Surplus $P_u - P_l$ flows to $\dot{E}_\text{stored}$ and/or $D_\text{downstream}$. $\dot{E}_\text{stored}$ has two physically distinct forms:
