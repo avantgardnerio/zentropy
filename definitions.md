@@ -530,6 +530,65 @@ The full chain Brent has been pursuing for 20 years, demonstrated in the cleanes
 
 ---
 
+## Claims — what zentropy actually contributes
+
+Four claims. They rank roughly **inversely** on two axes: importance (why the project exists) runs 3/4 → 2 → 1; defensibility / publication-readiness runs 1 → 2 → 3/4. **Strategy: build Claim 1 first (the simulation); its results *earn* Claim 2, which *enables* Claims 3 and 4.** Lead the paper with #1; motivate it with #3 and #4.
+
+**Claim 1 — the empty cell (lead with this; most defensible).**
+The **thermodynamic value of prediction *under selection***. Still 2012 proved predictive memory is thermodynamically efficient but froze the kernel (no selection); everyone who added selection (Bergstrom-Lachmann, Rivoire-Leibler, Koonin) dropped the thermodynamics. Zentropy makes Still's bound heritable and places it under differential reproduction, demonstrated in a Crooks-faithful simulation yielding the law **N\*(M)** — optimal predictive-memory capacity vs. environmental complexity (predicted ≈ 2M). Nobody occupies this cell. *Status: the build target (`still.py`); the evidence base for 2–4.*
+
+**Claim 2 — a formal, physical definition of life (corollary, earned by Claim 1).**
+*Life ≡ a dissipative structure (Prigogine) with predictive memory (Still)* — instantaneous, substrate-neutral, no time-bound (the fire/diamond cut). Sharp consequence: the sim's **N=0 → N>0 edge is a non-life → life crossing by the definition's own criterion** (N=0 = a replicating dissipative structure lacking predictive memory = non-life; N>0 = predictive memory acquired = alive) — demonstrated *with a mechanism*, where Koonin 2022 admits the pre/post ensembles are "not well understood." **Precise scope:** this is the *predictive-memory* crossing (criterion 1), not the origin of replication itself (monomer→RNA = abiogenesis, out of scope). Strength depends on the convergence proof *deriving* the definition rather than asserting it.
+
+**Claim 3 — correcting the universal value function (most important; defensible as a *correction*, not a grand discovery).**
+The objective life/evolution optimizes is **not maximum dissipation** (contra MEP — the contested Maximum Entropy Production conjecture, Paltridge/Dewar/Martyushev — and the naive max-dissipation reading of England). It is **max cumulative harnessing reinvested as predictive structure** — equivalently, *widen the zentropy window* / max(+∆N) with productive storage. Kolchinsky 2024 supplies the negative half (dissipation does not bound replication); the sim supplies the positive half (what *is* maximized). Framed as *"we correct a flawed but influential universal value function,"* this stands on its own; framed as *"we found life's universal objective,"* it walks into the graveyard of grand non-equilibrium principles. Claim the correction.
+
+**Claim 4 — substrate-agnosticism, incl. AI (highest reach; most consequential *and* most contestable).**
+Because both criteria are built from substrate-neutral primitives (joules + bits, no reference to carbon or biology), the definition transfers without modification to cells, organisms, civilizations, memes, software, and AI. Bitey, timely consequence: a running learning-AI inference satisfies both criteria → it is **thermodynamically alive in the same physical sense as a bacterium** (NOT conscious — a separate question, firewalled; see [the AI section](#the-life-definition-applied--ai-citation-and-prior-frameworks)). **Honest framing:** bare "substrate independence" is old (artificial life, astrobiology, functionalism, even FEP); the novelty is that here it is a *derived consequence* of substrate-neutral primitives yielding a *checkable verdict*. It is a corollary of Claim 2 (rides on the definition) and the most attackable claim — keep `alive ≠ conscious` load-bearing, and do **not** let "AI is alive" become the headline that swamps the rigorous core (Claim 1).
+
+## Key papers — literature map
+
+Disambiguation of the cited literature, grouped by the role each plays. `papers/` holds PDFs.
+
+**The thermodynamic engine — how driven matter self-organizes (the substrate, criterion 2 of life):**
+
+| Paper | What it established | Role for zentropy |
+|---|---|---|
+| **Prigogine 1977** (Nobel lecture, *Time, Structure & Fluctuations*) | *Dissipative structures*: far-from-equilibrium open systems self-organize, maintained by throughput; extent set by long-range correlation | Supplies the bounded-region term — "dissipative structure" replaces "persisting boundary" |
+| **England 2013** (*Statistical Physics of Self-Replication*) — "1st England" | Thermodynamic treatment of self-replication; seed of dissipative adaptation | Selection-among-structures mechanism (downstream of Prigogine) |
+| **Perunov-Marsland-England 2016** (*Statistical Physics of Adaptation*) — "2nd England" | Dissipative adaptation formalized; Ψ−Φ; **Eq-9 Arrhenius hopping** | The Crooks-faithful microdynamics kernel (sim Tier-0) |
+| **Kachman-Owen-England 2017** (*Self-Organized Resonance*) — "the 20-particle thing" | The **only peer-reviewed simulation** of England's effects: 20 monomers + Arrhenius bonds → adaptive resonance | The sim benchmark to converge with |
+
+**The information / prediction core (criterion 1 of life):**
+
+| Paper | What it established | Role for zentropy |
+|---|---|---|
+| **Still 2012** (*Thermodynamics of Prediction*) — the keystone | Predictive memory has thermodynamic *value*; non-predictive memory costs dissipation (∝ kT·(I_mem − I_pred)); **kernel held fixed, no selection** | Criterion 1 + the bit-cost; the bound zentropy puts under selection |
+| **Bennett 2003** (*Landauer & Maxwell's Demon*) | Landauer floor: kT·ln2 per irreversible bit erased | The information-cost currency in the sim |
+
+**The selection question — is dissipation the discriminator? (No.):**
+
+| Paper | What it established | Role for zentropy |
+|---|---|---|
+| **Kolchinsky 2024** (*Dissipation does not bound replicator rates*) | **Theorem**: no universal relation between dissipation and replicator growth/decay | Citation **ally** — kills "dissipation is the discriminator," clearing the slot for prediction |
+| **Adler 2026** (*How Information Evolves / SDA*) | Abstract genetic-algorithm sim: differential *persistence* → selection without genes or explicit fitness | Corroborates the Darwin-minimal half; **footnote only** (heuristic, no thermodynamics — founding zentropy on it would be circular) |
+
+**Value of prediction in evolution — the crowded framing (ALL non-thermodynamic except Still):**
+
+| Paper | What it established | Role for zentropy |
+|---|---|---|
+| **Bergstrom-Lachmann 2005** (*Fitness Value of Information*) | *Fitness* value of prediction, bounded by mutual information (Kelly-betting lineage) — **no thermodynamics** | The fitness-side bound zentropy welds to Still's thermodynamic-side bound |
+| **Rivoire-Leibler 2011** (*Value of Information for Populations…*) | Rigorous generalization of B-L; MI bound on fitness value (violable by individual stochasticity) — **no thermodynamics** | Shows the fitness-side weld point is unoccupied thermodynamically |
+| **Vanchurin-Koonin 2022** (PNAS, *Thermodynamics of Evolution…*) | Evolution as learning (Friston/loss-function lineage); K ∝ S (genome complexity ∝ environmental entropy) ≈ N\*(M) | **Closest competitor**; reached via Friston (variational, not physical) + no sim + no Still → differentiate on bedrock-thermo grounding & deliverables |
+
+**The framework to ground (not build on):**
+
+| Paper | What it established | Role for zentropy |
+|---|---|---|
+| **Friston 2013** (*Life As We Know It*) / FEP | Variational free energy; Markov blanket as self-maintaining boundary | Removed from the body (variational ≠ thermodynamic — "magical thinking"); the *potential* target of a future weld relating his "free energy" to Still's dissipation |
+
+**One-line lineage:** Prigogine → England → Kachman gives the *engine* (dissipative structures, no prediction); Still gives the *prediction value* (no selection); Bergstrom-Lachmann/Rivoire-Leibler give the *fitness value* (no thermodynamics); Koonin reaches the *evolutionary law* via Friston (no thermodynamics, no sim). **Zentropy's lane = the thermodynamic value of prediction *under selection* — the one cell none of them occupy.**
+
 ## Direct conceptual precursors of zenergy (not just exergy in general)
 
 Three thinkers gestured at zenergy without quite landing it:
