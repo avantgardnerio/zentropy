@@ -134,6 +134,38 @@ This does not oppose the second law. The max-$H$ lineage dissipates *more* than 
 
 ---
 
+## Life — operational definition
+
+Trait-list definitions of life ("metabolizes, reproduces, responds to stimuli, …") misclassify in both directions: fire by adding traits it doesn't really have, a sterile human by subtracting traits they do. Zentropy builds the definition from physical primitives instead:
+
+> **A region $R$ is alive at time $t$ iff it is a dissipative structure with predictive memory.**
+
+Unpacking:
+
+- **(Still 2012)** *Predictive memory* — $R$ holds information about its environment that reduces uncertainty about future-relevant variables: $I_\text{pred}(R;\,\text{future} \mid \text{past}) > 0$.
+- **(Prigogine 1977 / England 2013 / Perunov-Marsland-England 2014/2016)** *Dissipative structure* — $R$ is a far-from-equilibrium dissipative structure: a self-organizing region maintained by energy/matter throughput, whose spatial extent is set by the long-range correlation over which it "acts as a whole." Equivalently, $\langle W_\text{diss}(R) \rangle$ exceeds the counterfactual dissipation rate for the same gradient without $R$. England's dissipative adaptation supplies the downstream selection *among* such structures (dissipation magnitude is not itself the discriminator — Kolchinsky 2024).
+
+The definition is a *composition* of two cited results, not a new primitive. If Still + England compose in the constrained regime — the load-bearing claim of the [convergence proof](#theoretical-claims-asserted-not-yet-derived) — the life definition falls out as a consequence; no separate "what is life" derivation is needed.
+
+### Consequences
+
+- **Substrate-independent.** Both criteria are substrate-neutral — Still's predictive information is information-theoretic; England's dissipative adaptation is thermodynamic. The definition applies to cells, organisms, civilizations, memes, software, AI without modification. See [Substrate-agnosticism](#substrate-agnosticism--progenitors-include-memetic-and-technological-offspring).
+- **The test runs on the running process, not the substrate.** A running learning AI passes; a pocket calculator doing static arithmetic, or a Windows process doing nothing predictive, fails. The hardware is *boundary infrastructure* — analogous to a cell membrane, which is the same whether the cell is alive or dead. What makes the region alive is whether the process running inside holds predictive memory. The verdict is binary at the process level, not continuous at the hardware level.
+- **Reproduction, metabolism, and agency are not in the definition.** They appear as common *implementations* of the two criteria — DNA is one way to store predictive memory across generations; metabolism is one way to sustain the dissipative boundary — but the criteria do not require them. A sterile human passes; a chemoautotroph at a vent passes; a virus passes (memory in the genome, dissipation via host). Trait-list misclassifications dissolve.
+- **The boundary is a dissipative structure — at whatever scale you integrate.** A single structure's spatial edge is set physically (Prigogine's correlation length, the region that acts as a whole), not hand-drawn. But dissipative structures *nest*: cell ⊂ organism ⊂ economy ⊂ biosphere are each dissipative structures at successive scales, so *which* level you integrate over — and whether the lineage is genetic, memetic, or technological — is a modeling input (see [Lineage scope is a modeling input](#lineage-scope-is-a-modeling-input) and [Substrate-agnosticism](#substrate-agnosticism--progenitors-include-memetic-and-technological-offspring)). This paper focuses on the clean cases (cell, organism), where the correlation-defined boundary is sharp; large-scale and substrate-shifted cases (a national economy, Earth's biosphere) carry partly externally-imposed boundaries and are left to future work.
+- **Instantaneous in principle.** The two criteria can be tested at any instant $t$. Empirically distinguishing a real structure from a thermal fluctuation requires integrating over a short window long enough for signal-to-noise, but historical persistence is not in the definition.
+
+### Fire — worked example
+
+The textbook *"is fire alive?"* riddle is the canonical edge case for any definition of life. Trait-list definitions famously misclassify fire as alive (it "consumes fuel, produces waste, grows, responds to environment"); a bare $\Delta N \ge 0$ slogan makes the same mistake (a flame has $N(t) > 0$ and forest fires propagate via spread/sparks). The dissipative-structure-with-predictive-memory definition cuts cleanly:
+
+- **Criterion (1), predictive memory — fails.** A flame has no internal model of its environment. The flame's local concentration profile weakly correlates with where the next bit of fuel is, but this is a passive physical consequence — not memory the flame *maintains and uses* to predict future state. No selection has built a predictive model into the flame; there is no compressed encoding of the environment in Still's sense.
+- **Criterion (2), dissipative structure — passes only degenerately.** A flame is a dissipative structure that runs spontaneously wherever fuel + O₂ + ignition coincide. But its persistence is access-to-fuel, not selected-for-prediction. The structure of the flame is not what dissipative adaptation acts on; the available gradient is. Once the fuel is gone, the flame is gone — no selection happened *on the flame*.
+
+Net: **fire is not alive**, and the answer falls out of the definition without needing a threshold ("how much $I_\text{pred}$ is enough?"). The threshold problem that haunted the earlier compression-identity framing is **dissolved**: the question becomes whether the boundary *persists because of* its memory, and a flame demonstrably does not. The companion gap ("'simpler' needs a metric") is closed by the same move: a process is *simpler* iff it lacks predictive memory. Fire vs. bacteria: same dissipation regime, different memory content. The cut is clean.
+
+---
+
 ## Why a reference environment is required
 
 Exergy quantifies a *gradient*. Without a baseline, "available work" is meaningless — energy at uniform temperature, pressure, and composition has zero exergy regardless of quantity. No gradient, no engine. This is the second law in a different vocabulary.
@@ -309,35 +341,7 @@ $L(t) \leq P_l(t) \leq P_u(t) \leq U(t)$ at all times. The outer width $U - L$ i
 
 ---
 
-## Life — operational definition
-
-Trait-list definitions of life ("metabolizes, reproduces, responds to stimuli, …") misclassify in both directions: fire by adding traits it doesn't really have, a sterile human by subtracting traits they do. Zentropy builds the definition from physical primitives instead:
-
-> **A region $R$ is alive at time $t$ iff it is a dissipative structure with predictive memory.**
-
-Unpacking:
-
-- **(Still 2012)** *Predictive memory* — $R$ holds information about its environment that reduces uncertainty about future-relevant variables: $I_\text{pred}(R;\,\text{future} \mid \text{past}) > 0$.
-- **(Prigogine 1977 / England 2013 / Perunov-Marsland-England 2014/2016)** *Dissipative structure* — $R$ is a far-from-equilibrium dissipative structure: a self-organizing region maintained by energy/matter throughput, whose spatial extent is set by the long-range correlation over which it "acts as a whole." Equivalently, $\langle W_\text{diss}(R) \rangle$ exceeds the counterfactual dissipation rate for the same gradient without $R$. England's dissipative adaptation supplies the downstream selection *among* such structures (dissipation magnitude is not itself the discriminator — Kolchinsky 2024).
-
-The definition is a *composition* of two cited results, not a new primitive. If Still + England compose in the constrained regime — the load-bearing claim of the [convergence proof](#theoretical-claims-asserted-not-yet-derived) — the life definition falls out as a consequence; no separate "what is life" derivation is needed.
-
-### Consequences
-
-- **Substrate-independent.** Both criteria are substrate-neutral — Still's predictive information is information-theoretic; England's dissipative adaptation is thermodynamic. The definition applies to cells, organisms, civilizations, memes, software, AI without modification. See [Substrate-agnosticism](#substrate-agnosticism--progenitors-include-memetic-and-technological-offspring).
-- **The test runs on the running process, not the substrate.** A running learning AI passes; a pocket calculator doing static arithmetic, or a Windows process doing nothing predictive, fails. The hardware is *boundary infrastructure* — analogous to a cell membrane, which is the same whether the cell is alive or dead. What makes the region alive is whether the process running inside holds predictive memory. The verdict is binary at the process level, not continuous at the hardware level.
-- **Reproduction, metabolism, and agency are not in the definition.** They appear as common *implementations* of the two criteria — DNA is one way to store predictive memory across generations; metabolism is one way to sustain the dissipative boundary — but the criteria do not require them. A sterile human passes; a chemoautotroph at a vent passes; a virus passes (memory in the genome, dissipation via host). Trait-list misclassifications dissolve.
-- **The boundary is a dissipative structure — at whatever scale you integrate.** A single structure's spatial edge is set physically (Prigogine's correlation length, the region that acts as a whole), not hand-drawn. But dissipative structures *nest*: cell ⊂ organism ⊂ economy ⊂ biosphere are each dissipative structures at successive scales, so *which* level you integrate over — and whether the lineage is genetic, memetic, or technological — is a modeling input (see [Lineage scope is a modeling input](#lineage-scope-is-a-modeling-input) and [Substrate-agnosticism](#substrate-agnosticism--progenitors-include-memetic-and-technological-offspring)). This paper focuses on the clean cases (cell, organism), where the correlation-defined boundary is sharp; large-scale and substrate-shifted cases (a national economy, Earth's biosphere) carry partly externally-imposed boundaries and are left to future work.
-- **Instantaneous in principle.** The two criteria can be tested at any instant $t$. Empirically distinguishing a real structure from a thermal fluctuation requires integrating over a short window long enough for signal-to-noise, but historical persistence is not in the definition.
-
-### Fire — worked example
-
-The textbook *"is fire alive?"* riddle is the canonical edge case for any definition of life. Trait-list definitions famously misclassify fire as alive (it "consumes fuel, produces waste, grows, responds to environment"); a bare $\Delta N \ge 0$ slogan makes the same mistake (a flame has $N(t) > 0$ and forest fires propagate via spread/sparks). The persisting-boundary-with-predictive-memory definition cuts cleanly:
-
-- **Criterion (1), predictive memory — fails.** A flame has no internal model of its environment. The flame's local concentration profile weakly correlates with where the next bit of fuel is, but this is a passive physical consequence — not memory the flame *maintains and uses* to predict future state. No selection has built a predictive model into the flame; there is no compressed encoding of the environment in Still's sense.
-- **Criterion (2), persisting boundary — passes only degenerately.** A flame is a dissipative structure that runs spontaneously wherever fuel + O₂ + ignition coincide. But its persistence is access-to-fuel, not selected-for-prediction. The structure of the flame is not what dissipative adaptation acts on; the available gradient is. Once the fuel is gone, the flame is gone — no selection happened *on the flame*.
-
-Net: **fire is not alive**, and the answer falls out of the definition without needing a threshold ("how much $I_\text{pred}$ is enough?"). The threshold problem that haunted the earlier compression-identity framing is **dissolved**: the question becomes whether the boundary *persists because of* its memory, and a flame demonstrably does not. The companion gap ("'simpler' needs a metric") is closed by the same move: a process is *simpler* iff it lacks predictive memory. Fire vs. bacteria: same dissipation regime, different memory content. The cut is clean.
+## The life definition applied — AI, citation, and prior frameworks
 
 ### AI under the definition — the first bitey consequence
 
