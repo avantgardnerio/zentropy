@@ -52,6 +52,8 @@ Units: J/s (instantaneous rate); J for the cumulative $\int N(R, t)\,dt$ over a 
 
 **Paper term:** *coupled exergy* (or *accessible exergy* if the audience prefers) — descriptive, technically defensible. First-mention convention: *"coupled exergy (hereafter N, or zenergy informally)."*
 
+**Possible correspondence — England's *absorbed work* (flagged, not assumed).** $N$ (inbound exergy flux) plausibly corresponds to the *work absorbed from the drive* in England's framework (England 2013; Perunov-Marsland-England 2016): the same inflow, with his dissipation $\Psi$ ≈ the dissipated fraction of $N$ (i.e. $D_\text{boundary}$). Two cautions before treating it as identity: (1) gated on close reading of the source; (2) England's absorption is *narrower* (single-system, specific drive $\lambda(t)$) while $N$ includes a downstream-routing channel his single-system model lacks — so $N$ may be a strict generalization. Precise identification deferred to the convergence derivation; cite as *corresponds to*, not *equals*.
+
 ### Realized, not potential — the critical clarification
 
 The point that took refinement to land:
@@ -123,6 +125,8 @@ Two candidate value functions appear available: maximize dissipation ($D$) or ma
 So life maximizes $H$ because *storing harnessed exergy as deployable capacity is what persistence and growth are made of.* **Productive storage** takes physically distinct forms: energy reserves (ATP, fat), food, fuel, capital, infrastructure, and — the form that drives the recursion — bits of predictive information ($I_\text{pred}$, including latent $I_\text{pred}$).
 
 This does not oppose the second law. The max-$H$ lineage dissipates *more* than the burn-now alternative — just later and distributed across a larger or longer-lived structure. Instantaneous boundary-$D$ and lineage-cumulative-$D$ diverge: burn-now maximizes the former and minimizes the latter (gradient gone, nothing built); harness-and-store does the reverse. Selection-for-persistence (proximate) → max-$H$-with-storage (agent strategy) → max-cumulative-$D$ (thermodynamic consequence). Max-instantaneous-$D$ is the losing strategy, not a rival objective.
+
+**Max dissipation is not the discriminator.** Kolchinsky (2024) shows from first principles that no universal relationship links thermodynamic dissipation to replicator growth and decay rates — the dissipated-work bound usually read off England (2013) does not, in fact, pick out which configurations persist. Zentropy cites this rather than re-deriving it. With dissipation magnitude ruled out, the quantity that discriminates life is *predictive memory* (Still 2012), developed below.
 
 **Growth or replication, indifferently.** Cumulative lineage-$H$ grows whether the lineage gets bigger as one entity or copies into many — the framework privileges neither. Biology *defaults* to replication only because cells hit hard scaling limits (surface-to-volume, structural integrity, diffusion times), so copying is the only way to keep growing total $H$ past individual-size limits. Substrates without those limits (AI across hardware, a civilization, a fungal network) can grow instead. Replication is a substrate-contingent implementation of "grow cumulative $H$," not a physical requirement — consistent with the [life definition](#life--operational-definition), which also does not require reproduction.
 
@@ -503,7 +507,9 @@ A phase transition happens when an innovation makes a previously-unfavorable reg
 | **Idealized model systems** | yes, directly measurable | computational replicators with explicit state; this is England's lab domain |
 | **Real biological cells** | hard but proxy-able | metabolic efficiency (ATP/glucose), genome-to-functional-gene ratios, regulatory complexity per environmental dimension — biologists already measure these, just not in Still's vocabulary |
 
-**Empirical validation strategy:** show that selection trajectories in driven model systems (England-style computational replicators) actually do trace out the $I_\text{mem}$ / $I_\text{pred}$ trajectory the framework predicts. Coupled with biological proxies for the same quantities in real cells, this is the *experimental* arm of the convergence proof.
+**Empirical validation strategy:** show that selection trajectories in driven model systems (England-style computational replicators) actually do trace out the $I_\text{mem}$ / $I_\text{pred}$ trajectory the framework predicts. Coupled with biological proxies for the same quantities in real cells, this is the *experimental* arm of the convergence proof.[^adler]
+
+[^adler]: Adler (2026) independently shows that differential *persistence* alone — with no genes, replication, or explicit fitness function — produces selection-like evolutionary dynamics in an abstract genetic-algorithm model, corroborating the Darwin-minimal piece of the composition. But Adler's persistence is a hand-tuned heuristic stability score, not a physical quantity; zentropy's aim is precisely to *ground* such persistence in thermodynamics. Adler is therefore corroboration, not foundation — building zentropy on his simulations would be circular.
 
 ### Why this is the right test case
 
@@ -515,7 +521,7 @@ A phase transition happens when an innovation makes a previously-unfavorable reg
 
 ### What the convergence proof would say about this system
 
-> Selection favors dissipators (England 2013) ⊕ better predictors waste less (Still 2012) → DNA encodes compressed predictive structure → propagation multiplies that compressed structure → $\Delta N > 0$ = expansion of active compressed predictive structure in the universe.
+> Driven matter self-organizes into dissipative structures (England 2013) — but dissipation rate is *not* the discriminator (Kolchinsky 2024); among those structures, the better predictors persist (Still 2012) → DNA encodes compressed predictive structure → propagation multiplies that compressed structure → $\Delta N > 0$ = expansion of active compressed predictive structure in the universe.
 
 The full chain Brent has been pursuing for 20 years, demonstrated in the cleanest possible system.
 
