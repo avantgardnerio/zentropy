@@ -198,9 +198,18 @@ if __name__ == "__main__":
             if g > best_per_M[M][0]:
                 best_per_M[M] = (g, N)
         print(row)
+    # CONVERGENT-DERIVATION CHECK (do this once the physics stubs are filled and numbers are real):
+    # N*(M) should track environmental complexity. Cross-check its slope against Koonin
+    # (Vanchurin-Koonin 2022, PNAS, p6): their K ∝ S (genome complexity ∝ environmental entropy) is
+    # the SAME law, reached via Friston/learning theory with NO thermodynamics and NO simulation.
+    # If our Still-grounded, Crooks-faithful N*(M) reproduces that scaling from a different foundation,
+    # that's a *convergent derivation* — two independent routes to one law — which is what turns
+    # "synthesis" into "unification" (Maxwell, not Kepler). See papers/vanchurin-koonin-2022-...pdf
+    # and Claim 1 in definitions.md.
     print("\nN*(M)  (argmax-growth memory per environment):")
     for m in M_VALUES:
         print(f"  M={m}:  N* = {best_per_M[m][1]}   (predicted ≈ {2*m})")
+    print("  [cross-check N*(M) slope vs Koonin K∝S (PNAS 2022, p6) — convergent derivation]")
     print("\nPhysics is STUBBED (=== FILL FROM PAPER ===): the Eq-9 Arrhenius eat-rule and the")
     print("Still non-predictive-memory dissipation are placeholders — numbers are NOT a result yet.")
     print("Watch: smart wins everywhere -> Still-cost stub too weak; nowhere -> framework wrong.")
