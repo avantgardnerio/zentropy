@@ -103,6 +103,15 @@ An agent that destroys accumulated order without storing it is carrying *non-pre
 
 **This collapses the destruction prediction into Still's existing framework.** We do not need an extra "destruction penalty" term. Agent-scope selection on Still's bound naturally produces alignment with global $\Delta N$. Wanton destroyers waste bits, pay $k_BT$ per wasted bit, lose to non-destroyers — all substrate-agnostically.
 
+**The bidirectional symmetry — one inequality, two corollaries.** The destruction-penalty above has a positive-sign mirror: the **colonization-gain bound** (currently developed in `definitions.md` lines 167–198, queued to land in this spine). Both drop out of Still 2012's bound applied to opposite sides of the agent-environment interaction:
+
+| Side of $\dot N = H - D$ | Corollary | Sign | Mechanism |
+|---|---|---|---|
+| $H$ (upper bound on harvest) | Colonization gain | $+$ | Better $I_\text{pred}$ match → more productive gradient extraction |
+| $D$ (lower bound on dissipation) | Wanton-destruction penalty | $-$ | Non-predictive bits → forced $k_B T(I_\text{mem} - I_\text{pred})$ cost |
+
+So **signed $\Delta N$ is fully captured by Still's bound** — no separate destruction-penalty term needed, no separate colonization-gain term needed. They are *one prediction read in two directions*. `definitions.md` flagged colonization-gain as zentropy's first piece that *extrapolates* beyond existing results — Still's kernel was fixed, so she derived the bound but never let prediction *be selected for*. Destruction-penalty is the same extrapolation, opposite sign: one mathematical move, two corollaries. **Selection across heritable kernels** (the [[project-sim-england-state]] "WHERE THE NOVELTY IS" framing) opens both directions simultaneously.
+
 **Local divergences exist.** An agent's $N$ can momentarily diverge from its global $\Delta N$ contribution (e.g., short-term destructive behavior that has yet to be selected against). These are *impedances* (Brent's word, 2026-05-28) — resistances to alignment, not refutations of it. The system is driven *toward* alignment by selection on Still's bound, even when local realizations briefly disagree.
 
 ### 3.3 The inconsistency (the central tension to resolve)
