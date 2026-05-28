@@ -1,245 +1,238 @@
 """
-Zentropy sim (Tier 1) — population of tape-agents on a finite board.
+zentropy.py — the first HONEST zentropy sim: England's kernel + Still/Ouldridge's
+COMPUTED dissipation + Darwin's selection, composed into one experiment.
+(2026-05-27. Supersedes the tape-agent zentropy.py and the sampling-MI approach in still.py.)
 
-PLUMBING: Claude.  PHYSICS STUBS are marked  === FILL FROM PAPER === ; those are yours.
-Supersedes simulation-design.md (per Brent, 2026-05-26).
-england.py = Tier 0 (the faithful Eq-9 microdynamics, yours to fill). This file should
-reuse that transition rule once it exists — for now it carries a dumb placeholder.
+WHY THIS IS "zentropy" AND NOT "still.py" OR "ouldridge.py":
+  zentropy := the thermodynamic value of prediction UNDER SELECTION (definitions.md, Claim 1;
+  the one cell Still/England/Ouldridge/Koonin each leave empty). This file is the first to
+  compose all three pillars into that cell:
+    - England (PME-2016, Eq-9): the local-detailed-balance Arrhenius kernel = the dissipative-
+      structure engine.                                                          [life criterion 2]
+    - Still 2012 / Ouldridge 2017: ONE ledger, not two mechanisms. Dissipation = correlation you
+      build but don't cash. We COMPUTE it as entropy production  sigma = sum ln(k_fwd/k_rev)  from
+      the kernel's OWN rates -- never sampled MI (which blows up as 8^N and biases the wrong way).
+      Ouldridge = frozen-source corner (copy cost w >= kT*I, paid at replication below);
+      Still = moving-source generalization (the nonpredictive part is what dissipates). [criterion 1]
+    - Darwin: heritable kernel + energy-limited differential reproduction = the novelty none did.
+  Deliverable: the law N*(M) -- optimal memory capacity vs environmental complexity. Predict N* ~ 2M.
 
-Question under test: does predictive memory pay for itself?
-Pre-registered 2x2:  (predictable vs noise drive) x (constrained/small vs unconstrained/big board).
-Zentropy predicts smart dominates in EXACTLY ONE cell: predictable AND constrained.
-Everything in units of kT, so temperature drops out.
+PLUMBING: Claude.   PHYSICS (=== FILL FROM PAPER ===): Brent.
+  The sigma accounting and the selection are HONEST even with provisional constants: sigma from any
+  LDB-valid rates is genuine entropy production; the PAPER only calibrates magnitudes. The kernel
+  here is provisional and inline -- move it into england.py once that reproduces the PME Fig-3 drift,
+  so both files share ONE physics core.
+
+WHAT THIS FIXES: the 'smart wins everywhere' bug still.py flagged. The cost of carrying memory that
+  does NOT predict is now REAL dissipation (sigma computed from rates), not a hand-set N*LN2 fudge.
+  If over-memory still wins everywhere here, the bias map / harvest coupling is wrong -- not the knob.
 
 Run:  python zentropy.py
-NOTE: physics is stubbed; the printed numbers are NOT a result until the stubs are filled.
+NOTE: physics is STUBBED at the === FILL FROM PAPER === banners. Printed numbers are NOT a result yet.
 """
 
 import math
 import random
-from collections import Counter
-from enum import IntEnum
+
+LN2 = math.log(2)
+PHI = (1 + 5 ** 0.5) / 2            # golden ratio -> incommensurate (non-harmonic) drive freqs
 
 # ===========================================================================
-# PHYSICS CONSTANTS — STUBS (units of kT). Replace magnitudes per cited sources.
+# PHYSICS CONSTANTS
 # ===========================================================================
-LN2 = math.log(2)                  # Landauer floor per irreversible bit-op [Bennett 2003 (papers/); Landauer 1961]
-COST_READ         = LN2            # sensor reset per read   [Bennett: Maxwell's-demon resolution]
-COST_WRITE_BIT    = LN2            # per memory bit overwritten   [Landauer erasure]
-COST_PER_TAPE_BIT = LN2            # per bit of new structure created at replication
+# --- Landauer-pinned (NOT free knobs; price is LN2 per irreversible bit) ---
+BITS_PER_UNIT = 8                  # === FILL FROM PAPER ===: genome bits per memory unit. Should be
+                                   # DERIVED from environmental precision demand (~ Koonin K~S), NOT the
+                                   # float's 64-bit storage width (an implementation artifact -- mostly
+                                   # unselected, nonpredictive bits). 8 is a deliberate, sweepable stub.
+COST_PER_BIT  = LN2                # copy cost per bit AT PERFECT FIDELITY [Bennett 2003]. Scaled below
+                                   # by the copy's mutual information (1 - H2(s)) -- Ouldridge Eq 19.
 
-# ARBITRARY free params — no paper sets these; they are the knobs to SWEEP (never cherry-pick).
-COST_EAT        = 5.0 * LN2        # STUB: action cost of one eat attempt.
-PELLET_PEAK     = 30.0 * LN2       # STUB: energy from a perfectly-timed eat (reward profile).
-INIT_ENERGY     = 60.0 * LN2       # STUB
-REPRO_THRESHOLD = 120.0 * LN2      # STUB
-BITS_PER_UPDATE = 4                # STUB: bits the delta-rule rewrites per learning step
-
-OPCODE_BITS   = 3                  # 8 opcodes -> 3 bits. ISA choice; only the smart>dumb DIRECTION is robust.
-REGISTER_BITS = 8                  # phase-register width (smart only)
-OMEGA         = 0.3                # STUB: drive angular frequency (pellet cycle rate)
-MATCH_WINDOW  = 0.5                # STUB: how close clock must be to guess to "eat now" (radians)
-
-# ===========================================================================
-# OPCODES + TAPES  (honest bit-count comes from tape length, not hand-assignment)
-# ===========================================================================
-class Op(IntEnum):
-    EAT           = 0   # blind: pay COST_EAT; if pellet up, gain reward
-    PROCREATE     = 1   # if able, copy tape into adjacent empty square (pay tape-bit cost)
-    RECALL_PHASE  = 2   # load phase_guess (own-memory read ~ free)
-    COMPARE_CLOCK = 3   # set match flag if clock ~ phase_guess
-    EAT_IF_MATCH  = 4   # eat only when match flag set
-    READ_OUTCOME  = 5   # pay COST_READ; observe the learning signal
-    UPDATE_MEM    = 6   # pay COST_WRITE_BIT*BITS_PER_UPDATE; delta-rule update
-
-DUMB_TAPE  = [Op.EAT, Op.PROCREATE]
-SMART_TAPE = [Op.RECALL_PHASE, Op.COMPARE_CLOCK, Op.EAT_IF_MATCH,
-              Op.READ_OUTCOME, Op.UPDATE_MEM, Op.PROCREATE]
-
-def tape_bits(tape, has_register):
-    return len(tape) * OPCODE_BITS + (REGISTER_BITS if has_register else 0)
+# --- provisional Arrhenius / coupling magnitudes (=== FILL FROM PAPER: PME-2016 Eq-9, p15 ===) ---
+# These set the SHAPE; exact values are the calibration to SWEEP, never cherry-pick.
+BARRIER       = 2.0                # provisional hop barrier (kT units)
+BIAS_GAIN     = 3.0                # provisional: how strongly the prediction biases harvest rate
+DG_HARVEST    = 30.0 * LN2         # provisional free energy captured per successful harvest event
+BASAL         = 1.0 * LN2          # maintenance dissipation per tick (boundary upkeep)
+INIT_ENERGY   = 60.0 * LN2
+REPRO_THRESHOLD = 120.0 * LN2      # energy to be 'mature enough' to ATTEMPT a copy
+ACCURACY_S    = 0.99               # copy fidelity -- HYPER-PARAMETER, the controlled axis to SWEEP.
+                                   # NOT heritable (one free trait per sim). 0.5 = coin, 1.0 = perfect.
+MUT_SCALE     = 0.5                # representation artifact: float-perturbation per unit copy-error.
+                                   # Vanishes under a bit-encoded genome. BS/sweep knob, not biology.
+SEED_SPREAD   = 0.1                # initial colony diversity (setup), distinct from copy fidelity. BS.
+SIG_AMP, NOISE_AMP = 1.0, 0.5      # drive signal vs noise; SNR is a hidden axis -- CONTROL it
+BASE_FREQ     = 0.3
 
 # ===========================================================================
-# DRIVE + TRANSITION RULE — STUBS.   === FILL FROM PAPER ===
-# The transition rule is the make-or-break Crooks-faithful piece (PME 2016 Eq 9, p15).
-# It belongs in england.py; this is a GLARINGLY DUMB placeholder so the scaffold runs.
-# TODO(brent): once england.py reproduces the Eq-9 drift, import & reuse that here so the
-# two sims share ONE physics core. If this rule isn't Crooks-faithful, Still/England won't emerge.
+# DRIVE:  noise + M incommensurate sinusoids.  x(t) unknown to the agent.  [Still 2012]
+# Honest plumbing (signal generation), not stubbed physics.
 # ===========================================================================
-def pellet_value(phase_offset, t):
-    """Pellet fullness in [0,1] — England's time-varying field E(t). STUB: cosine."""
-    return 0.5 * (1.0 + math.cos(OMEGA * t + phase_offset))
+class Drive:
+    def __init__(self, M, rng):
+        self.freqs  = [BASE_FREQ * (PHI ** i) for i in range(M)]   # non-harmonic => each needs its own unit
+        self.phases = [rng.uniform(0, 2 * math.pi) for _ in range(M)]
+        self.rng = rng
 
-def eat_succeeds(phase_offset, t):
-    """STUB: deterministic threshold. REPLACE with Eq-9 Arrhenius rate from england.py."""
-    return pellet_value(phase_offset, t) > 0.5
-
-def eat_reward(phase_offset, t):
-    return PELLET_PEAK * pellet_value(phase_offset, t)
+    def value(self, t):
+        sig = sum(SIG_AMP * math.sin(f * t + p) for f, p in zip(self.freqs, self.phases))
+        return sig + self.rng.gauss(0.0, NOISE_AMP)
 
 # ===========================================================================
-# MUTUAL-INFORMATION ESTIMATOR  (real plumbing — you asked what this is)
-# ---------------------------------------------------------------------------
-# MI I(X;Y) in bits = how much knowing X reduces uncertainty about Y:
-#     I = sum_xy  p(x,y) * log2[ p(x,y) / (p(x) p(y)) ]      ( = 0 iff independent ).
-# This is the "plug-in / histogram" estimator: count frequencies from samples, plug in.
-# Exact-ish here because the state space is tiny & discrete. Biased high for small N
-# (fine for long runs; Miller-Madow correction if ever needed).
-#
-# I_pred = MI(agent memory ; FUTURE environment)   [Still 2012].
-# === FILL FROM PAPER ===  *which* variables go in is a Still-modeling choice. The default
-# below (phase-guess vs future pellet-up) is a placeholder; verify against Still. For the
-# NOISE case it's especially crude (uses current phase to fake a "future" — see sample site).
+# LDB KERNEL HELPERS  (=== FILL FROM PAPER ===: exact Eq-9 form/constants -> england.py)
+# The ONLY non-negotiable: every transition has a defined reverse, so sigma is well-defined.
 # ===========================================================================
-def mutual_information(samples_xy):
-    n = len(samples_xy)
-    if n == 0:
+def arrhenius(barrier_minus_bias):
+    """Eq-9 shape: hop rate ~ exp(-(barrier - bias)). Provisional; calibrate to PME-2016 p15."""
+    return math.exp(-barrier_minus_bias)
+
+def fire(k_fwd, k_rev, rng):
+    """One stochastic LDB transition this tick. Returns (fired?, entropy_to_bath_in_nats).
+    Entropy produced = ln(k_fwd/k_rev) when forward fires (can be < 0 on a tick = a 'cashed
+    fluctuation', exactly the Still/Ouldridge correlation-harvest event). <sigma> >= 0 over time."""
+    p_fwd = k_fwd / (k_fwd + k_rev)
+    if rng.random() < p_fwd:
+        return True,  math.log(k_fwd / k_rev)
+    return False,     math.log(k_rev / k_fwd)
+
+# ===========================================================================
+# COPY FIDELITY -> DISSIPATION   (=== FILL FROM PAPER ===: Ouldridge 2017)
+# Mutations are NOT a separate op -- they ARE the errors of a finite-fidelity copy. Fidelity s sets
+# BOTH the error rate (1-s) AND the cost. Cost per bit = the copy's mutual information:
+#     f(s) = 1 - H2(s)     [Eq 19, the IDEAL/reversible floor; finite, caps at 1 bit/copy at s=1].
+# The AUTONOMOUS realized cost (what LIFE pays) is >=2x this and DIVERGES as s->1 (Eq 20 / Fig 2) --
+# that divergence IS the thermodynamic mutation-rate floor. Swap copy_info_per_bit to surface it.
+# ===========================================================================
+def binary_entropy(s):
+    if s <= 0.0 or s >= 1.0:
         return 0.0
-    pxy = Counter(samples_xy)
-    px  = Counter(x for x, _ in samples_xy)
-    py  = Counter(y for _, y in samples_xy)
-    I = 0.0
-    for (x, y), c in pxy.items():
-        p_xy, p_x, p_y = c / n, px[x] / n, py[y] / n
-        I += p_xy * math.log2(p_xy / (p_x * p_y))
-    return I
+    return -s * math.log2(s) - (1 - s) * math.log2(1 - s)
 
-def circular_diff(a, b):
-    """Shortest signed angular distance a-b in (-pi, pi]  (for the phase delta-rule)."""
-    return (a - b + math.pi) % (2 * math.pi) - math.pi
-
-def discretize_phase(theta, nbins=8):
-    return int((theta % (2 * math.pi)) / (2 * math.pi) * nbins) % nbins
+def copy_info_per_bit(s):
+    """f(s) = 1 - H2(s): bits of info per copied bit = Ouldridge's I (Eq 19), the IDEAL floor.
+    === FILL FROM PAPER ===  swap in the autonomous (diverging) form from Eq 20 / Fig 2 for life."""
+    return 1.0 - binary_entropy(s)
 
 # ===========================================================================
-# AGENT  (tape interpreter)
+# AGENT  -- N memory units, each a 2-state stochastic element with INHERITED rate-bias params.
+# The kernel is fixed per life (Still); selection tunes the inherited params across generations.
+# dumb = N=0 (no memory, reactive).  smart = N>0.  One continuum.
 # ===========================================================================
 class Agent:
-    def __init__(self, kind, rng, phase_guess=None):
-        self.kind = kind
-        self.tape = DUMB_TAPE if kind == "dumb" else SMART_TAPE
-        self.has_register = (kind == "smart")
-        self.bits = tape_bits(self.tape, self.has_register)
+    def __init__(self, freqs, s, rng):
+        self.freqs = list(freqs)              # inherited per-unit frequency GUESSES (the heritable kernel)
+        self.s = s                            # copy fidelity (fixed hyper-parameter, not heritable)
+        self.N = len(self.freqs)
+        self.state = [0] * self.N             # memory units (stochastic up/down)
+        self.genome_bits = self.N * BITS_PER_UNIT
         self.energy = INIT_ENERGY
-        self.phase_guess = phase_guess if phase_guess is not None else rng.uniform(0, 2 * math.pi)
-        self._match = False
+        self.rng = rng
 
-    def run_tape(self, board, pos, t):
-        """Execute the whole tape once (one tick). Returns (child_pos, child) or None."""
-        spawn = None
-        for op in self.tape:
-            if op == Op.EAT:
-                self._attempt_eat(board, pos, t)
-            elif op == Op.EAT_IF_MATCH:
-                if self._match:
-                    self._attempt_eat(board, pos, t)
-            elif op == Op.RECALL_PHASE:
-                pass  # own-memory read ~ free
-            elif op == Op.COMPARE_CLOCK:
-                clock = (OMEGA * t) % (2 * math.pi)
-                self._match = abs(circular_diff(clock, self.phase_guess)) < MATCH_WINDOW
-            elif op == Op.READ_OUTCOME:
-                # STUB: learns every tick forever. Realistic version front-loads learning then
-                # coasts (Still: stop re-measuring once modeled). Your refinement.
-                self.energy -= COST_READ
-                self._observed_peak = -board.phase[pos]   # STUB learning signal (depends on Eq-9 rule)
-            elif op == Op.UPDATE_MEM:
-                self.energy -= COST_WRITE_BIT * BITS_PER_UPDATE
-                target = getattr(self, "_observed_peak", self.phase_guess)
-                self.phase_guess += 0.5 * circular_diff(target, self.phase_guess)  # your delta rule
-            elif op == Op.PROCREATE:
-                spawn = self._maybe_spawn(board, pos)
-        return spawn
+    def step(self, drive, t):
+        sigma = 0.0                           # entropy produced this tick (COMPUTED, not sampled)
 
-    def _attempt_eat(self, board, pos, t):
-        self.energy -= COST_EAT
-        off = board.phase[pos]
-        if eat_succeeds(off, t):
-            self.energy += eat_reward(off, t)
+        # (1) Each memory unit hops via an LDB transition whose rates are biased by its inherited
+        #     guess. A unit "wants up" when its internal oscillator says up.
+        #     === FILL FROM PAPER ===  The prediction->rate-bias map is YOURS (see the definitions.md
+        #     TODO + Still's "which variables" modeling choice). Provisional sinusoid bias below.
+        for i in range(self.N):
+            bias = math.sin(self.freqs[i] * t)
+            if self.state[i] == 0:
+                fired, ds = fire(arrhenius(BARRIER - bias), arrhenius(BARRIER + bias), self.rng)
+                if fired: self.state[i] = 1
+            else:
+                fired, ds = fire(arrhenius(BARRIER + bias), arrhenius(BARRIER - bias), self.rng)
+                if fired: self.state[i] = 0
+            sigma += ds
 
-    def _maybe_spawn(self, board, pos):
-        if self.energy < REPRO_THRESHOLD:
-            return None
-        empty = board.random_empty_neighbor(pos)
-        if empty is None:
-            return None
-        self.energy -= self.bits * COST_PER_TAPE_BIT   # copy tape = create new ordered structure
-        self.energy -= INIT_ENERGY                     # endow the child
-        # STUB: child inherits the learned phase (Lamarckian) — or should it start fresh? your call.
-        return (empty, Agent(self.kind, board.rng, phase_guess=self.phase_guess))
+        # (2) GRADED harvest (no threshold collapse): the better memory predicts the ACTUAL drive,
+        #     the faster the harvest reaction runs. Work captured when it fires; sigma it produces is
+        #     part of the same ledger. dumb (N=0) has alignment=1 baseline => blind constant attempt.
+        #     === FILL FROM PAPER ===  harvest coupling + the work/heat split are yours.
+        x_up = 1.0 if drive.value(t) > 0 else 0.0
+        align_up = (sum(self.state) / self.N) if self.N else 1.0
+        match = align_up * x_up + (1 - align_up) * (1 - x_up)     # 1 = predicted right, 0 = predicted wrong
+        fired, ds = fire(arrhenius(BARRIER - BIAS_GAIN * match), arrhenius(BARRIER), self.rng)
+        sigma += ds
+        if fired:
+            self.energy += DG_HARVEST
 
-# ===========================================================================
-# BOARD
-# ===========================================================================
-class Board:
-    def __init__(self, size, predictable, rng):
-        self.size, self.predictable, self.rng = size, predictable, rng
-        self.agents = {}
-        self.phase = {(x, y): (0.0 if predictable else rng.uniform(0, 2 * math.pi))
-                      for x in range(size) for y in range(size)}
+        # (3) pay maintenance + the computed dissipation. Charging SIGNED sigma is the honest move:
+        #     nonpredictive memory transitions cost (Still); occasional cashed fluctuations refund.
+        #     This term is what makes N>N* selected-against WITHOUT a hand-set penalty.
+        self.energy -= BASAL
+        self.energy -= sigma
+        return sigma
 
-    def reshuffle_noise(self):
-        # STUB: "noise" = no temporal structure to learn -> reshuffle phases each tick.
-        # (predictable = phases fixed, so memory CAN learn them.)
-        if not self.predictable:
-            for pos in self.phase:
-                self.phase[pos] = self.rng.uniform(0, 2 * math.pi)
-
-    def random_empty_neighbor(self, pos):
-        x, y = pos
-        nbrs = [(x + dx, y + dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))
-                if 0 <= x + dx < self.size and 0 <= y + dy < self.size
-                and (x + dx, y + dy) not in self.agents]
-        return self.rng.choice(nbrs) if nbrs else None
+    def reproduce(self):
+        """Attempt to copy the genome at fidelity s, then DIE TRYING if you can't finish.
+        Returns (child_or_None, sigma_copy). sigma_copy is dissipated (and tracked) even on failure."""
+        if self.energy < REPRO_THRESHOLD:                    # not mature enough to even attempt
+            return None, 0.0
+        sigma_copy = self.genome_bits * COST_PER_BIT * copy_info_per_bit(self.s)
+        self.energy -= sigma_copy                            # committed: pay the copy dissipation
+        if self.energy < INIT_ENERGY:                        # can't endow a child after paying -> died trying
+            return None, sigma_copy                          # energy spent, no offspring (high-fidelity tax)
+        self.energy -= INIT_ENERGY                           # endow child
+        # mutations ARE the copy errors: fidelity s sets their magnitude (=== representation stub:
+        # float-perturbation proxy; faithful version flips bits of a bit-encoded genome ===).
+        err = MUT_SCALE * (1.0 - self.s)
+        f = [v + self.rng.gauss(0, err) for v in self.freqs]
+        return Agent(f, self.s, self.rng), sigma_copy
 
 # ===========================================================================
-# RUN one condition
+# RUN one (N, M) cell:  a colony of N-capacity agents in an M-complexity drive.
 # ===========================================================================
-def run(board_size, predictable, n_ticks, rng, future_lag=3):
-    board = Board(board_size, predictable, rng)
-    c = board_size // 2
-    board.agents[(c, c)] = Agent("dumb", rng)
-    sc = (min(c + 1, board_size - 1), c)
-    if sc != (c, c):
-        board.agents[sc] = Agent("smart", rng)
-
-    ipred_samples = []  # (smart memory state, FUTURE pellet-up?)  [Still I_pred] — STUB measurement
-    for t in range(n_ticks):
-        board.reshuffle_noise()
-        for pos in list(board.agents.keys()):
-            agent = board.agents.get(pos)
-            if agent is None:
-                continue
-            if agent.kind == "smart":
-                fut = pellet_value(board.phase[pos], t + future_lag)
-                ipred_samples.append((discretize_phase(agent.phase_guess), 1 if fut > 0.5 else 0))
-            spawn = agent.run_tape(board, pos, t)
-            if agent.energy <= 0:
-                del board.agents[pos]
-                continue
-            if spawn is not None:
-                child_pos, child = spawn
-                if child_pos not in board.agents:
-                    board.agents[child_pos] = child
-
-    counts = Counter(a.kind for a in board.agents.values())
-    return counts, mutual_information(ipred_samples)
+def run(N, M, n_ticks, pop_cap, rng, s=ACCURACY_S):
+    drive = Drive(M, rng)
+    pop = [Agent([BASE_FREQ * (PHI ** i) * (1 + rng.gauss(0, SEED_SPREAD)) for i in range(N)], s, rng)
+           for _ in range(8)]
+    total_sigma = 0.0
+    for _ in range(n_ticks):
+        newborns = []
+        for a in pop:
+            total_sigma += a.step(drive, _)
+            child, sigma_copy = a.reproduce()
+            total_sigma += sigma_copy
+            if child is not None and len(pop) + len(newborns) < pop_cap:
+                newborns.append(child)
+        pop = [a for a in pop if a.energy > 0] + newborns
+        if not pop:
+            break
+    return len(pop), total_sigma          # fitness proxy = final headcount; sigma = computed dissipation
 
 # ===========================================================================
-# 2x2 SWEEP  (the pre-registered test)
+# THE N x M SWEEP  (the pre-registered phase diagram; deliverable = N*(M))
 # ===========================================================================
 if __name__ == "__main__":
-    N_TICKS = 3000
-    BIG, SMALL = 12, 4   # unconstrained vs constrained board (STUB sizes)
-    print(f"{'board':>14} {'drive':>12} {'dumb':>6} {'smart':>6} {'I_pred(bits)':>14}")
-    for size, label in ((BIG, "unconstrained"), (SMALL, "constrained")):
-        for predictable in (True, False):
-            counts, ipred = run(size, predictable, N_TICKS, random.Random(0))
-            drive = "predictable" if predictable else "noise"
-            print(f"{label:>14} {drive:>12} {counts.get('dumb', 0):>6} "
-                  f"{counts.get('smart', 0):>6} {ipred:>14.3f}")
-    print("\nZentropy predicts: smart dominates in (constrained, predictable) ONLY.")
-    print("  everywhere -> free-memory/overhead bug;  nowhere -> framework wrong.")
-    print("Physics is STUBBED (see === FILL FROM PAPER ===). With these arbitrary constants")
-    print("expect dumb to win until you SWEEP COST_EAT up toward PELLET_PEAK — that calibration,")
-    print("and the real Eq-9 rule, are yours. Sweep & report the pattern; never cherry-pick to win.")
+    N_TICKS, POP_CAP = 2000, 400
+    N_VALUES = [0, 1, 2, 3, 4, 5, 6]
+    M_VALUES = [0, 1, 2, 3]
+    print("zentropy.py -- England kernel + Still/Ouldridge COMPUTED dissipation + selection.")
+    print("Phase diagram: final population (fitness proxy) per (N memory capacity, M env-complexity).")
+    print("Pre-registered prediction: N* ~ 2M  (best-growing N rises with environmental complexity).")
+    print(f"Copy fidelity s = {ACCURACY_S}  (HYPER-PARAMETER -- sweep this axis; NOT heritable).\n")
+    print("N\\M  " + "".join(f"{('M='+str(m)):>9}" for m in M_VALUES))
+    best = {m: (-1, -1) for m in M_VALUES}
+    for N in N_VALUES:
+        row = f"{N:<4} "
+        for M in M_VALUES:
+            g, _sigma = run(N, M, N_TICKS, POP_CAP, random.Random(0))
+            row += f"{g:>9}"
+            if g > best[M][0]:
+                best[M] = (g, N)
+        print(row)
+    print("\nN*(M)  (argmax-growth memory per environment):")
+    for m in M_VALUES:
+        print(f"  M={m}:  N* = {best[m][1]}   (predicted ~ {2 * m})")
+    # Convergent-derivation check (once physics stubs are filled): N*(M) slope vs Koonin K ~ S
+    # (Vanchurin-Koonin 2022, PNAS p6) -- same law, reached via Friston w/ no thermodynamics, no sim.
+    # Two independent routes to one law = unification, not synthesis. See definitions.md Claim 1.
+    print("\n  [cross-check N*(M) slope vs Koonin K~S (PNAS 2022, p6) -- convergent derivation]")
+    print("\nPhysics STUBBED at === FILL FROM PAPER ===: provisional Arrhenius constants, the")
+    print("prediction->rate-bias map, and the harvest work/heat split. Dissipation (sigma) is")
+    print("computed honestly from the LDB rates; only the MAGNITUDES await PME-2016 Eq-9 calibration.")
+    print("Copy: mutations are now the errors of a fidelity-s copy; sigma_copy = (1-H2(s))*bits*LN2")
+    print("(Ouldridge Eq 19, ideal floor). Swap the autonomous-diverging form (Eq 20/Fig 2) to see the")
+    print("mutation-rate floor -- at high s, agents pay the copy tax and die trying.")
+    print("Watch: smart wins everywhere -> bias map/harvest coupling wrong; nowhere -> framework wrong.")

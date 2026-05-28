@@ -132,6 +132,8 @@ This does not oppose the second law. The max-$H$ lineage dissipates *more* than 
 
 **Caveat:** "productive" is load-bearing. Storage that never deploys — latent $I_\text{pred}$ that never couples, reserves never drawn on — builds no capacity and improves nothing. The precise claim is *max H with productive storage*, the same conditional structure as the house/charity cases in the [∆N worked examples](#n--worked-examples).
 
+> **Refinement (2026-05-27) — the value function is the WINDOW, not harnessing.** Sharpening the above: even *"max H with productive storage"* is a misleading headline, because **a max-harnesser can also be a max-dissipater.** Gross harnessing is $N$ (≈ $P_u$); it does not discriminate. A pure dissipater (fire, hurricane) takes in enormous flux but must dissipate essentially all of it to maintain its own flow-structure, so $P_l \approx P_u$ and its **window width $P_u - P_l \approx 0$** — high throughput, zero surplus, builds nothing. A living system harnesses *efficiently* via predictive coupling, so it maintains itself on less than it can take in: $P_l < P_u$, a **positive window**, surplus available to store and grow. So the selection target is the **sustained zentropy window** $W = [P_l, P_u]$ — specifically its *width* (the surplus), held open *over time*. This absorbs the "productive storage" qualifier geometrically: widening the window **is** reinvesting surplus (raise $P_u$ via better $I_\text{pred}$, lower $P_l$ via efficiency). *Honest caveat:* it must be the **sustained/cumulative** window — one that opens wide then collapses (harness hard, then die) is not the target; keeping it open is. **This supersedes the "max H" / "equivalently widen the window" framing in [Claim 3](#claims--what-zentropy-actually-contributes) and in this section's header — propagate on next revision (max-H → max-window).**
+
 ---
 
 ## Life — operational definition
@@ -384,6 +386,21 @@ No clear right answer. Each has trade-offs against publication strategy.
 
 - **Schrödinger 1944, *What is Life?***. *"Feeds on negative entropy"* is criterion (2) without criterion (1) — it correctly identifies that life dissipates against gradients but does not distinguish life from fire. Schrödinger had half the answer.
 - **Trait-list definitions (NASA, textbooks).** Each listed trait is downstream of one of the two criteria; the trait list is the wrong abstraction layer. "Metabolizes" is an instance of (2); "responds to stimuli" is an instance of (1); "reproduces" is one mechanism by which a lineage stays in (1) over time. The definitions that proceed by listing traits are pattern-matching on instances rather than identifying the underlying physics.
+
+### Comparison with FEP
+
+Friston's Free Energy Principle also places prediction at the center, so a reader arriving from FEP will want the map between the two. Both can be read as universal value functions:
+
+- **FEP:** minimize variational free energy (≈ minimize expected surprise / prediction error).
+- **Zentropy:** maximize the sustained zentropy window — the surplus $P_u - P_l$ held open over time (raise $P_u$ via predictive coupling, lower $P_l$ via efficiency).
+
+Three structural differences, offered as orientation for a reader locating one framework relative to the other:
+
+1. *The quantities differ in kind.* FEP's free energy is variational — an information-theoretic bound, in bits. Zentropy's is thermodynamic, in joules.
+2. *The role of prediction differs.* In FEP, surprise-minimization is the objective. In zentropy, prediction is a mechanism in service of exergy harnessing. The two locate the "why" of prediction at different layers.
+3. *The treatment of degenerate cases differs.* FEP addresses the dark-room case (pure surprise-minimization satisfied by inaction) via preferred-state priors; zentropy's reinvestment clause excludes both the maximal-dissipation case (fire) and the stasis case (∆N→0).
+
+These are points of orientation, not claims of superiority — which framing is more useful depends on the question being asked. Notes on emphasis are kept in [[strategic-positioning-vs-fep]], out of the body.
 
 ---
 
@@ -745,6 +762,16 @@ Initialize random replicators → run the dynamics → measure:
 **Bonus:** a non-biological substrate that reproduces the framework's predicted dynamics is *itself* empirical evidence for substrate-agnosticism. The substrate-agnostic claim stops being asserted and becomes *demonstrated*.
 
 **Scope estimate:** 3–6 months of evening coding for someone with Brent's skill set. Comparable in scale to the reading-and-derivation effort. **Parallel-trackable with reading** — can start now as a sandbox for understanding the math.
+
+#### Follow-on (deferred 2026-05-27): the reversible-VM sim, v2
+
+> **TODO — revisit after the foundation paper proves N\*(M).** The current `zentropy.py` is a *kernel* sim: the copier is exogenous (handed over by the runtime), fidelity `s` is a dialed hyper-parameter, mutations are smooth, genome bits are hand-set. That is *supervised* copying (Ouldridge's cheap ideal floor) and it leaves a predictable attack surface: *"you just tuned your hyper-parameters until N\* ≈ 2M."* The v2 answer is to re-implement as a **minimal reversible-ISA virtual machine** where the dialed quantities become **emergent**:
+> - copier is **endogenous** (von Neumann — encoded in the mutable genome → copy-machinery overhead and *lethal* mutations are real, not abstracted);
+> - fidelity **emerges** from how many proofreading ops the program runs (not a hyper-parameter);
+> - genome bits = **program length** (not `BITS_PER_UNIT`);
+> - copying is **autonomous** — the agent runs its own LDB-costed copy loop (Ouldridge's *autonomous* regime, where the proofreading/divergence cost is real), not the supervised floor.
+>
+> **Keep it MINIMAL** (~4–5 reversible opcodes: `copy-symbol`, `compare`, `proofread/fix`, `advance`, `branch`), **not** a Turing-complete CPU — the *Avida trap* is that open-ended VMs demonstrate beautifully but prove laws poorly. Implementation: **Rust core + Python bindings** (Python is already the bottleneck). This is a **separate paper** — the substrate-agnostic / autonomous-self-replication *demonstration* — downstream of the clean-law *derivation*. Rationale captured 2026-05-27: everything learned that session (the autonomous tax, the von Neumann endogenous copier, proofreading-as-Maxwell-demon, lethal mutations, honest bit-counts) is structurally **unrepresentable** in the kernel sim and **natural** in the VM — which is why the design kept pulling there. Deferred deliberately, not abandoned.
 
 ### Empirical claims requiring validation (third pillar of the convergence paper)
 
