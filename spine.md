@@ -74,9 +74,11 @@ The framework is unit-flexible: write $N$ in joules when working thermodynamical
 
 ---
 
-## 3. $\Delta N$ at the **global scope** **[OPEN — formulation in development]**
+## 3. $\Delta N$ at the **global scope** **[OPEN — formulation in development; FRAMING UNDER RECONSIDERATION 2026-05-28]**
 
 > ⚠️ TERM TBD: "global scope" is a working placeholder. "Universe" is overused and not formal (Brent flagged 2026-05-28). See TBD section at end of doc for candidate replacements.
+
+> ⚠️ **FRAMING UNDER RECONSIDERATION (Brent, 2026-05-28):** The "stored order with vs. without" formulation below may be subtly wrong — the universe's actual value function may be **max cumulative dissipation over the forward light cone**, with "max bank order" being the within-life *proximate mechanism* rather than the fundamental quantity. End-of-universe edge case (agents cannibalize at drive depletion, leaving no buried treasure) supports the cumulative-D reframing. See memory `project-value-function-question` "Reframing under consideration" section. The destruction-penalty and colonization-gain mechanisms in §3.2 survive either framing; what changes is the *naming of what they're achieving*. Do not commit §3 to paper-grade form before this resolves.
 
 **The intent:**
 
