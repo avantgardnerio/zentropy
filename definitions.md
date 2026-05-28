@@ -28,6 +28,14 @@ Unpacking **General** non-teleologically:
 
 **Composition:** Special explains *within-replicator dynamics* (why some replicators outcompete others, given that they exist). General explains *why replicators exist at all* (the universe's organization selects for copying-things). Together: full framework at two scales, in two sentences.
 
+**Zentropy in three layers** — the unified statement (2026-05-27):
+
+1. **Permissive (outer law).** Thermodynamics *allows* a more-predictive structure to occupy the space of a less-predictive one — with **non-structure included as the $I_\text{pred}=0$ limit case.** Structure-formation and evolutionary turnover are one continuous mechanism, not two.
+2. **Within-structure objective.** Within a dissipative structure, selection favors *harnessing more than it dissipates* — [widening the zentropy window](#the-zentropy-window--operational-definition).
+3. **Cosmological result.** The recursion of (1) + (2) drives the **greatest fractal compression of the universe** — predictive structure tiling space-time at every scale that supports it — until heat death.
+
+That is zentropy. Equivalently, in one identity: $\;\mathbf{I_\text{pred,2} > I_\text{pred,1} \;\equiv\; \text{2nd law}}\;$ — *selection for predictive structure is the second law acting through replicating matter.*
+
 See [Open Problems](#theoretical-claims-asserted-not-yet-derived) for the convergence-proof structure that unpacks Special into actual derivable claims.
 
 ---
@@ -133,6 +141,67 @@ This does not oppose the second law. The max-$H$ lineage dissipates *more* than 
 **Caveat:** "productive" is load-bearing. Storage that never deploys — latent $I_\text{pred}$ that never couples, reserves never drawn on — builds no capacity and improves nothing. The precise claim is *max H with productive storage*, the same conditional structure as the house/charity cases in the [∆N worked examples](#n--worked-examples).
 
 > **Refinement (2026-05-27) — the value function is the WINDOW, not harnessing.** Sharpening the above: even *"max H with productive storage"* is a misleading headline, because **a max-harnesser can also be a max-dissipater.** Gross harnessing is $N$ (≈ $P_u$); it does not discriminate. A pure dissipater (fire, hurricane) takes in enormous flux but must dissipate essentially all of it to maintain its own flow-structure, so $P_l \approx P_u$ and its **window width $P_u - P_l \approx 0$** — high throughput, zero surplus, builds nothing. A living system harnesses *efficiently* via predictive coupling, so it maintains itself on less than it can take in: $P_l < P_u$, a **positive window**, surplus available to store and grow. So the selection target is the **sustained zentropy window** $W = [P_l, P_u]$ — specifically its *width* (the surplus), held open *over time*. This absorbs the "productive storage" qualifier geometrically: widening the window **is** reinvesting surplus (raise $P_u$ via better $I_\text{pred}$, lower $P_l$ via efficiency). *Honest caveat:* it must be the **sustained/cumulative** window — one that opens wide then collapses (harness hard, then die) is not the target; keeping it open is. **This supersedes the "max H" / "equivalently widen the window" framing in [Claim 3](#claims--what-zentropy-actually-contributes) and in this section's header — propagate on next revision (max-H → max-window).**
+
+#### The integration scope — individual vs lineage worldtube
+
+The value function above requires a choice of integration region $R$. The doc has so far treated *lineage scope* as a modeling input without specifying what closes a lineage; this subsection makes the distinction explicit, because it is structurally different from the individual case and is currently invisible in the sim.
+
+**Two scopes, two closure principles:**
+- *Individual scope.* $R$ is a connected spatial dissipative structure — the region over which the system "acts as a whole" (Prigogine's correlation-length closure). Its window $[P_l, P_u]$ integrates over the individual's lifetime, opening at boundary formation and closing at death. Physics judges individuals at this scope: live or die, grow or shrink.
+- *Lineage scope.* $R$ is the **descent-closed worldtube** — the 4-region formed by the union of all worldlines connected to a progenitor through reproduction events. The tube is *spatially disconnected* (descendants occupy locations the progenitor never touched) and *temporally extends past the progenitor's death*. Its closure principle is **genealogical/informational**, not spatial-correlation. The lineage window integrates over this whole tube.
+
+**Reproduction at each scope.**
+- *Individual scope:* a dissipation event. The parent pays $\sigma_\text{copy}$ + endowment; energy ledger debited; no credit returns; physics is done with the parent at death.
+- *Lineage scope:* a *branch-creation* event. The worldtube extends into a new region with its own local gradient; the lineage window's domain of integration grows. Nothing is added retroactively to the dead parent's individual ledger — the lineage tube is simply a different (larger) integration region.
+
+The metaphysical-sounding *"the parent is credited with the child's harnessing"* dissolves once the two scopes are kept separate. There is no backward-in-time credit transfer; there is a different integration region with a different (larger) integral. Both scopes are well-defined; they answer different questions. **Selection operates at the lineage scope** (differential reproduction determines which worldtubes extend further); **survival operates at the individual scope** (lifetime energy balance). Both are physical.
+
+**Grounding precedent.** Population-level information dynamics is an established lineage-scope framework. Vanchurin-Koonin 2022 treats the genome's accumulated predictive information as a population-scale quantity persisting across generations via reproduction — i.e., they already use a lineage scope, just denominated in bits. Zentropy uses the same scope and supplies the thermodynamic denomination (joules over the worldtube). Adopting Koonin's scope is not a borrowing of his machinery; it is reusing a closure principle the literature already accepts.
+
+**Math cost.** Integrating over branching worldtubes is harder than over individual lifetimes — but it is well-defined (a spatially disconnected 4-region with a genealogical closure), not nonlocal and not metaphysical. The doc's existing language of "lineage scope is a modeling input" is sharpened here, not contradicted.
+
+**Consequence for the sim.** The current `zentropy.py` is well-mixed, capped, and **spaceless**: children enter a global drive and compete under a hard `POP_CAP`. There is no spatial extent for the lineage worldtube to grow *into*, so reproduction cannot be represented as worldtube extension; it collapses to per-agent dissipation plus competition for fixed resources. This is why kids currently read as cost. Restoring spatial structure (per-cell gradient, local exergy) is what lets the lineage-window be the worldtube integral, and lets the **grow-vs-reproduce (r/K-style) tradeoff** — currently degenerate — become a real selectable strategy. The old `zentropy.py` had a `Board`; the kernel rewrite dropped it for interpretability. Like the [reversible-VM follow-on](#follow-on-deferred-2026-05-27-the-reversible-vm-sim-v2), this is a place where a simplification cut a load-bearing piece.
+
+> **Pending elevation (2026-05-27):** this scope distinction is potentially substantive enough to live in [Claims](#claims--what-zentropy-actually-contributes) — either as a sharpening of Claim 3 (the value function specifies its integration scope) or as a separate fifth claim about $R$ itself. Decision deferred to next revision; until then, the formalism is captured here as the doc's explicit answer to "what does the value function integrate over."
+
+#### The colonization-gain bound — first flagged extrapolation (2026-05-27)
+
+> **This is the first piece of zentropy that does not interpolate between existing results — it *extrapolates*.** The framework so far (life definition, value function, integration scope, σ-accounting) sits in the gap between Still / England / Koonin / Ouldridge / Bergstrom-Lachmann / Rivoire-Leibler — interpolation between published neighbors. The **colonization-gain bound** has only one wall (the lineage worldtube as integration region, above); the other side is open: there is no published joule-denominated bound on lineage worldtube expansion rate. **Document the mental model in full before any lit-search shapes it** — same discipline as pre-registering $N^* \approx 2M$ before running the sim; protect the hypothesis from drift. See [[feedback-search-discipline]].
+
+**Brent's intuition (2026-05-27):** *"There must be an exergy payback for injecting order ($I_\text{pred}$) into a space where there previously was none, at a thermodynamic level — a child discount on the frontier. Or maybe your child just eats better."*
+
+**First-pass mechanism (pre-registered hypothesis, not derivation).** The "child discount" is real and structural; on examination it collapses into the lineage worldtube's gain bound rather than constituting a separate exergy effect. Net cost of reproduction:
+
+$$\text{net cost} \;=\; \sigma_\text{copy} \;-\; \mathbb{E}[\text{lineage gain from the child}]$$
+
+Positive (reproduction loses) where expected gain is low; negative (positive-return investment) where expected gain is high. The discount lives entirely in the gain side.
+
+**The bound — ceiling and feasibility.** The ceiling on extraction is set by the local gradient and the colonizer's predictor's match with the local environment:
+
+$$\text{ceiling: max gain-rate at } c \;\;\le\;\; \underbrace{(\text{local exergy rate at } c)}_{\text{undepleted gradient}} \;\times\; \underbrace{(I_\text{pred} \text{ match between colonizer and } c)}_{\text{predictor works there}}$$
+
+The **expected** gain factors in displacement probability against whatever incumbent currently occupies $c$:
+
+$$\mathbb{E}[\text{gain at } c] \;\;=\;\; \text{ceiling} \;\times\; \Pr(\text{successful displacement vs.\ incumbent at } c)$$
+
+Displacement probability scales with the **efficiency delta** ($e_\text{colonizer} - e_\text{incumbent}$) at $c$ — how much better the colonizer extracts from the local gradient than the incumbent does. Continuous in incumbent strength, with three reference cases:
+- *Incumbent $I_\text{pred}=0$ (non-structure / abiotic):* $e_\text{incumbent} \approx 0$; displacement probability ≈ 1; full discount; maximum expected gain.
+- *Incumbent with $I_\text{pred}$ match below colonizer's:* partial probability; partial discount.
+- *Incumbent of equal $I_\text{pred}$ match:* probability ≈ 0; stalemate; zero expected gain.
+
+**Every successful displacement adds $(e_\text{colonizer} - e_\text{incumbent}) \times G$ to net work-extraction** at that location, where $G$ is the local gradient flux. More of $G$ is now captured as structure-work, less is exported as pure heat. The abiotic case is the limit where $e_\text{incumbent} \approx 0$ — the added margin is then maximal — but the *mechanism is the same continuous one* whether the incumbent is non-structure or a less-predictive structure. Both raise total throughput, widen the local window, and raise $P_l$ for any future entrant. This is the doc's window-section *"floor rises as neighbors saturate the gradient"* mechanism made quantitative.
+
+**$I_\text{pred,2} > I_\text{pred,1} \;\equiv\;$ 2nd law.** Selection for higher predictive structure *is* the second law acting through replicating matter — more of the available gradient flows through structured work-extraction rather than unstructured heat-export. This is the master identity behind the [three-layer synthesis](#thesis-statements) above.
+
+**Big consequence — this unifies pioneering with evolutionary turnover.** The [phase-transition ladder](#the-full-phase-transition-ladder-implicit-story-zentropy-will-tell-explicitly) (aerobic supplants anaerobic; multicellular supplants single-cell; brains supplant reflex-only; etc.) is *the same dynamic* as abiotic colonization: a more-predictive lineage occupying the space of a less-predictive one because the gradient is suboptimally extracted there. Same bound, same gain-side math. Pioneering virgin territory and evolutionary turnover collapse into one mechanism — exactly as Layer 1 of the three-layer synthesis states.
+
+**Possible second-order effect — niche construction.** Once a colonizer is established, it modifies the local environment in ways its lineage's predictor was already selected to handle, making the region *more* hospitable to subsequent colonizers from the same lineage. The lineage worldtube's integrated gain may therefore be **super-additive** in colonized cells (network effect, not a sum of independent per-cell gains). Likely where "compounding returns" of expansion live, and a candidate for the mechanism behind the phase-transition cycle's recursive growth. Cuts both ways: niche construction by a competing incumbent across lineages can also *resist* colonization (the incumbent's modifications favor its own predictor).
+
+**Honest hedge.** First-pass intuition about the bound's *shape*, not a derivation. Open math questions: precise form of the displacement-probability function vs efficiency delta; saturation at high $I_\text{pred}$ match; cross-cell interaction terms; form in the autonomous (Ouldridge-diverging) regime; whether niche-construction super-additivity is bounded or unbounded in principle. **Hypothesis pending lit-search and derivation; not yet a result.**
+
+**Status flag — possible Claim 5.** Strongest candidate so far for a separate Claim header (the *gain-side companion* to Still's cost bound, completing the lineage worldtube's value function). The pioneering ↔ evolutionary-turnover unification makes it potentially more substantive than just "the gain side." Decision deferred until lit-search confirms whether the weld already exists somewhere. Until then, this is the doc's **pre-registered hypothesis on what a lineage gains by expanding**, separate from what an individual costs to maintain.
+
+**Search targets, when ready:** cited-by intersection of Rivoire-Leibler × England; *"spatial thermodynamics of self-replication"*; *"thermodynamics of niche construction"*; *"thermodynamics of competitive exclusion"*; Wolpert's thermodynamics-of-computation lineage extended spatially. Roughly half a weekend to resolve whether the weld exists in some niche or is genuinely open.
 
 ---
 
@@ -762,6 +831,16 @@ Initialize random replicators → run the dynamics → measure:
 **Bonus:** a non-biological substrate that reproduces the framework's predicted dynamics is *itself* empirical evidence for substrate-agnosticism. The substrate-agnostic claim stops being asserted and becomes *demonstrated*.
 
 **Scope estimate:** 3–6 months of evening coding for someone with Brent's skill set. Comparable in scale to the reading-and-derivation effort. **Parallel-trackable with reading** — can start now as a sandbox for understanding the math.
+
+#### Known flaw (2026-05-27): current `zentropy.py` cannot measure ∆N
+
+> **The current implementation has diverged from the design sketch above and as a result cannot measure ∆N — the central value-function quantity.** Two compounding causes:
+> - *No spatial substrate.* The population is a flat list under a global drive; there are no cells. ∆N's counterfactual ("what the region was doing without me") has nowhere to live without a spatial substrate to compare against.
+> - *The drive is not depletable.* Every agent samples `drive.value(t)` independently and the source is unchanged by harvesting. Reproduction therefore *multiplies harvest capacity* (up to `POP_CAP`) rather than *colonizing previously-abiotic territory*; the act that should *be* the ∆N event — a cell going from abiotic baseline to biotic harnessing — has no representation. Equivalently: a child currently "expands space" instead of occupying existing space.
+>
+> *What the sim does measure:* per-agent σ (dissipation) and headcount (population growth). Both are valid quantities. **Neither is ∆N.** The N\*(M) curve the sim can produce is therefore "the N that maximizes headcount in a well-mixed undepleted drive," not "the N that maximizes the lineage-window value function." The numerical output exists; the value-function interpretation does not follow from it.
+>
+> *Path back to spec.* The design sketch above already requires *"driving field pumping exergy into the substrate"* and *"finite resource constraint."* Restoring those — per-cell local exergy that depletes when harvested, agents occupying cells, abiotic cells dissipating at baseline, reproduction colonizing a neighboring cell — is **recovery to the design sketch, not a new design.** The same architectural gap also blocks the [lineage worldtube integration scope](#the-integration-scope--individual-vs-lineage-worldtube): without spatial cells, the worldtube has no spacetime to grow into.
 
 #### Follow-on (deferred 2026-05-27): the reversible-VM sim, v2
 
