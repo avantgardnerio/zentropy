@@ -23,7 +23,7 @@ The central open question (see §3): how agent-scope $N$ and global-scope $\Delt
 
 > **Dissipative structures with predictive memory (i.e., life) are the configurations physics tends to produce wherever non-living dissipators leave exergy unconsumed. The same dynamic recurses (i.e., evolution): more predictive memory emerges wherever less predictive memory saturates.**
 
-(Brought from `definitions.md`. Word-by-word unpacking lives there until the prose pass brings what's still settled forward. Key components: *dissipative structures* = Prigogine's term, replaces the earlier "persisting boundary," whose temporal connotation is rejected; *predictive memory* = Still 2012's $I_\text{pred}$; *physics tends to produce* = statistical, not deterministic; *non-living dissipators leave exergy unconsumed* = the emergence condition; *the same dynamic recurses* = scale-invariance across phase transitions.)
+(Brought from `definitions.md`. Word-by-word unpacking lives there until the prose pass brings what's still settled forward. Key components: *dissipative structures* = Prigogine's term (no temporal/durability connotation — closure is the long-range correlation over which the system acts as a whole, not its lifetime); *predictive memory* = Still 2012's $I_\text{pred}$; *physics tends to produce* = statistical, not deterministic; *non-living dissipators leave exergy unconsumed* = the emergence condition; *the same dynamic recurses* = scale-invariance across phase transitions.)
 
 ### 1b. General zentropy **[OPEN — current best stub]**
 
@@ -144,7 +144,7 @@ So agent-scope $N$ and global-scope $\Delta N$ can diverge. The alignment hypoth
 
 > **Life ≡ a dissipative structure with predictive memory.**
 
-**Note on terminology (Brent, 2026-05-28):** "Dissipative structure" *deliberately replaces* the earlier "persisting boundary." Prigogine's term carries no temporal/durability connotation — its closure is the long-range correlation over which the system acts as a whole, not its lifetime. Life needs no minimum lifetime to count as life under this definition.
+**Note on terminology:** Prigogine's "dissipative structure" carries no temporal/durability connotation — its closure is the long-range correlation over which the system acts as a whole, not its lifetime. Life needs no minimum lifetime to count as life under this definition.
 
 Composition: England 2013 (dissipative adaptation supplies the "dissipative structure") + Still 2012 (predictive information supplies "predictive memory"). Substrate-neutral by construction. Memory `zentropy-life-definition` carries the fuller operational treatment, including the precise criterion (a region $R$ is alive at $t$ iff it holds predictive information *and* its dissipation excess vs. counterfactual is causally attributable to that memory) and the worked edge cases (fire, sterile human, virus, running learning AI, pocket calculator).
 
