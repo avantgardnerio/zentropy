@@ -63,6 +63,20 @@ PREDICTION 2 — I_pred decomposition on A(t). [Novel measurement; what this
     drive encodes drive-phase information in A). I_pred stays NEAR ZERO in the
     SNAP regime — selection there is structural avoidance, not informational.
 
+    Why the asymmetry is structural, not coincidental:
+        CATCH's target is a POINT in frequency space ("match ω_d exactly").
+        Configurations satisfying it carry ~log(precision-of-ω_d) bits about
+        the drive. The selection is information-DEMANDING.
+        SNAP's target is a HALF-SPACE ("be anywhere except near ω_d").
+        Configurations satisfying it carry approximately "not here" — much
+        less information. The selection is information-CHEAP.
+    The Still-bound runs identically in both directions; the asymmetric
+    INFORMATIONAL CONTENT of catch's vs. snap's targets is what makes I_pred
+    diverge between the two regimes. This also explains Kachman et al.'s
+    supplemental remark that snap's "qualitative results [are] not finely
+    sensitive" to parameter choices — half-space targets are robust under
+    perturbation; point targets are not (supp p13).
+
     Subtlety to think through (Brent): Kachman's drive is DETERMINISTIC
     (pure sinusoid). Still 2012's formulation is for stochastic environments;
     naively applied, I_pred against a deterministic F could be trivially high
@@ -326,6 +340,14 @@ R_0     = 1.0        # Arrhenius rate prefactor (sets the time scale; supp leave
 
 N_STEPS = 10_000     # Gillespie steps per trajectory (supp says ~10^4 typical)
 
+# Snap-bond parameter (supp p13 — "qualitative results not finely sensitive";
+# Kachman et al. do not pin a value because they did not non-dimensionalize.
+# β_snap = 4.0 chosen so the snap-barrier-minimum exp factor (B_min ≈ 0.73)
+# gives rates of the same order of magnitude as catch's typical operating
+# range — matching their stated "similar orders of magnitude" criterion.)
+BETA_SNAP = 4.0
+N_THETA_SNAP = 200   # quadrature samples for the drive-cycle average in snap_rates
+
 
 # ============================================================================
 # Phase 1a — mechanics: steady-state oscillation amplitudes for a fixed A
@@ -445,20 +467,57 @@ def catch_rates(d_ij, beta=BETA, k=K, epsilon=EPSILON, r_0=R_0):
     return r_form, r_break
 
 
+def snap_rates(d_ij, beta=BETA_SNAP, k=K, epsilon=EPSILON, r_0=R_0,
+               n_theta=N_THETA_SNAP):
+    """Time-averaged snap-bond rates (supp p13).
+
+    The snap barrier function (no harmonic well, just soft repulsion +
+    harmonic stretch term that grows quadratically):
+        B(x) = (1/2) k x^2 + k · exp(-|x|)
+
+    Unlike catch:
+      - Form rate decreases when |x| is small  (repulsion barrier high)
+      - Form rate decreases when |x| is large  (harmonic stretch barrier high)
+      - Break rate INCREASES with |x|          (no harmonic part — bonds snap
+                                                easily once stretched)
+
+    No closed form for the drive-cycle average — integrate numerically over θ:
+        <r_form>  = r_0 · (1/2π) ∫₀^{2π} exp(-β [½k(d sin θ)² + k exp(-|d sin θ|)]) dθ
+        <r_break> = r_0 · (1/2π) ∫₀^{2π} exp(-β [k exp(-|d sin θ|) - ε]) dθ
+
+    Vectorized: with d_ij shape (N, N) and a θ grid of length n_theta, evaluate
+    the integrand on shape (N, N, n_theta) and average along the last axis.
+    Uniform sampling on [0, 2π) makes the mean equal to (1/2π) ∫ dθ.
+    """
+    theta = np.linspace(0.0, 2.0 * np.pi, n_theta, endpoint=False)
+    sin_theta = np.sin(theta)                                # (n_theta,)
+    x = d_ij[..., None] * sin_theta[None, None, :]           # (N, N, n_theta)
+    abs_x = np.abs(x)
+
+    repulsion = k * np.exp(-abs_x)                           # both barriers
+    barrier_form  = 0.5 * k * x**2 + repulsion
+    barrier_break = repulsion - epsilon
+
+    r_form  = r_0 * np.exp(-beta * barrier_form ).mean(axis=-1)
+    r_break = r_0 * np.exp(-beta * barrier_break).mean(axis=-1)
+    return r_form, r_break
+
+
 # ============================================================================
 # Phase 1c — Gillespie on the graph state space
 # ============================================================================
 
-def gillespie_step(A, omega=OMEGA_D, F_drive=F, rng=None):
+def gillespie_step(A, omega=OMEGA_D, F_drive=F, rng=None, rate_fn=catch_rates):
     """One Gillespie step on the Markov-on-graphs process:
       1. Solve the mechanics at current A → get d_ij for all pairs.
-      2. Compute catch-bond rates for all pairs.
+      2. Compute bond-event rates via rate_fn(d_ij) → (r_form, r_break).
       3. For each pair: if currently bonded (A_ij=1), the event is BREAK at
          rate <r_break>(d_ij). If unbonded, the event is FORM at <r_form>(d_ij).
       4. Sample next event time exponentially with total rate.
       5. Sample which event by rate-weighted multinomial.
       6. Flip the bit in A.
 
+    rate_fn lets us swap catch ↔ snap rules cleanly (Phase 1d Fig S8 panels).
     F_drive=0 gives the undriven control (all d_ij=0, all pair rates equal,
     random-graph equilibrium emerges).
 
@@ -468,7 +527,7 @@ def gillespie_step(A, omega=OMEGA_D, F_drive=F, rng=None):
         rng = np.random.default_rng()
 
     d = steady_state_distances(A, omega=omega, F=F_drive)
-    r_form, r_break = catch_rates(d)
+    r_form, r_break = rate_fn(d)
 
     # Per-pair rate: break if currently bonded, form if not
     rates = np.where(A == 1, r_break, r_form)
@@ -491,7 +550,7 @@ def gillespie_step(A, omega=OMEGA_D, F_drive=F, rng=None):
 
 
 def run_sim(n_steps=N_STEPS, A_init=None, omega=OMEGA_D, F_drive=F,
-            seed=None, spectrum_every=None):
+            seed=None, spectrum_every=None, rate_fn=catch_rates):
     """Run a Gillespie simulation for up to n_steps events.
 
     Returns (final_A, trajectory, spectrum) where:
@@ -500,6 +559,8 @@ def run_sim(n_steps=N_STEPS, A_init=None, omega=OMEGA_D, F_drive=F,
         spectrum_every is None), sampled every spectrum_every steps;
         dt is the time the network spent in this configuration before
         the next event, suitable for occupancy weighting.
+
+    rate_fn selects the bond chemistry: catch_rates (default) or snap_rates.
     """
     rng = np.random.default_rng(seed)
     A = np.zeros((N, N), dtype=int) if A_init is None else A_init.copy()
@@ -508,7 +569,8 @@ def run_sim(n_steps=N_STEPS, A_init=None, omega=OMEGA_D, F_drive=F,
     spectrum = []
     for step in range(n_steps):
         new_A, dt, event_type, ij = gillespie_step(A, omega=omega,
-                                                    F_drive=F_drive, rng=rng)
+                                                    F_drive=F_drive, rng=rng,
+                                                    rate_fn=rate_fn)
         if event_type is None:
             print(f"[step {step}] no events available — stopping.")
             break
@@ -659,39 +721,45 @@ if __name__ == "__main__":
         print("No events occurred (sim halted at step 0).")
 
     # ========================================================================
-    # Phase 1d — Fig S8 reproduction: normal-mode spectrum, catch + undriven.
-    # (Snap curve — green in S8 — is next; needs snap-bond rates.)
+    # Phase 1d — Fig S8 reproduction: normal-mode spectrum, catch + undriven + snap.
     # ========================================================================
     print()
     print("=" * 70)
-    print("Phase 1d — Fig S8 reproduction (catch + undriven; snap pending)")
+    print("Phase 1d — Fig S8 reproduction (catch + undriven + snap)")
     print("=" * 70)
     print()
     OMEGA_FIG = 1.5   # Fig S8's drive frequency
-    print(f"Two runs ({N_STEPS} steps each), sampling spectrum every 10 steps, "
+    print(f"Three runs ({N_STEPS} steps each), sampling spectrum every 10 steps, "
           f"ω_d = {OMEGA_FIG}:")
     print()
 
     # Catch + drive (red in Fig S8)
     _, _, samples_catch = run_sim(omega=OMEGA_FIG, F_drive=10.0,
-                                   seed=42, spectrum_every=10)
-    # Undriven control (blue in Fig S8)
+                                   seed=42, spectrum_every=10,
+                                   rate_fn=catch_rates)
+    # Undriven control (blue in Fig S8) — uses catch chemistry
     _, _, samples_undriven = run_sim(omega=OMEGA_FIG, F_drive=0.0,
-                                      seed=43, spectrum_every=10)
+                                      seed=43, spectrum_every=10,
+                                      rate_fn=catch_rates)
+    # Snap + drive (green in Fig S8)
+    _, _, samples_snap = run_sim(omega=OMEGA_FIG, F_drive=10.0,
+                                  seed=44, spectrum_every=10,
+                                  rate_fn=snap_rates)
 
     # Drop ~10% burn-in from each
     burn = max(1, len(samples_catch) // 10)
     samples_catch    = samples_catch[burn:]
     samples_undriven = samples_undriven[burn:]
+    samples_snap     = samples_snap[burn:]
 
     save_spectrum_plot(
-        {"undriven": samples_undriven, "catch": samples_catch},
+        {"undriven": samples_undriven, "catch": samples_catch, "snap": samples_snap},
         omega_d=OMEGA_FIG,
         out_path="./out/kachman-fig-s8-reproduction.png",
     )
     print()
-    print("Honesty test: the CATCH spectrum should show an additional peak")
-    print(f"near ω_d = {OMEGA_FIG} that is NOT present in the undriven baseline.")
+    print("Honesty test: CATCH peaks at ω_d (drive-seeking); SNAP avoids ω_d")
+    print(f"(drive-avoiding); UNDRIVEN is the haystack baseline. ω_d = {OMEGA_FIG}.")
 
 
 # === PHASE 2a: cluster-level coarse-graining of A ===
