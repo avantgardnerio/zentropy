@@ -457,3 +457,44 @@ Bennett 2003, physics/0210005v2. Saved to papers/bennett-2003-landauer-and-maxwe
   Honest caveat: the analogy is structural, not dynamical. Bonds have specific oscillator-mode physics; op-code execution has different dynamics. Whether the same Still-bound / W_diss
    ≥ kT(I_mem − I_pred) form applies identically across both substrates needs care — they probably share the bound (it's substrate-agnostic) but not the constants.
 
+--- 
+
+❯ if it was op codes floating around... where would the instruction pointer live? What about RNA as a model for the correct simulation layer? there's opcode chains floating around
+  and executor enzymes that attach and run them?
+  
+● You just spotted the missing piece. Free op-codes in a bath have no execution mechanism — without an instruction pointer, they're just symbols, not a running computation. And nature
+   solved this problem with ribosomes.
+
+  The RNA-ribosome model:
+  - RNA strand = op-code chain (codons = op-codes; sequence is fixed at synthesis)
+  - Ribosome = the executor — physical agent that binds an RNA strand and walks codon-by-codon. The ribosome IS the instruction pointer made spatial.
+  - tRNAs / amino acids = "data" delivered per op-code execution
+  - NTPs / metabolic gradient = the energy drive
+  - Ribozymes = strands that, when executed, catalyze their own copying — i.e., op-code chains that include CPY operations
+
+  This solves several problems at once:
+  - IP lives in the ribosome (no abstract "where am I" problem)
+  - Strands are sequences in real space (adjacency is physical, like Kachman)
+  - Energy input has a natural channel (NTP hydrolysis = the drive)
+  - Replication is a specific op-code sequence, not a sim-level cheat
+  - Selection acts on which strand-ribosome combinations persist
+
+  Why this is the right abstraction layer for zentropy:
+
+  It sits cleanly between Kachman (sub-life: stable structures with no execution) and DNA-protein (full-life: encoded programs with separate transcription/translation). The RNA-world
+  layer is exactly the threshold M* candidate — before ribosomes, RNA strands degrade and "rediscovery" of useful sequences is M·kT-expensive per generation; after ribosome emergence,
+   the same strand can be copied cheaply by the executor. The replication-machinery cost K from spine §6 IS the ribosome.
+
+  Maps to existing predictions:
+  - PREDICTION 2 (I_pred): RNA strand sequences are a richer state space than bond topology — easier to detect "the strand encodes the drive structure" via mutual information
+  - PREDICTION 3 (storage / abiogenesis): ribozyme emergence IS the storage-channel-opens transition. M* in this substrate is the environmental-complexity threshold where ribozymes
+  become favored
+  - PREDICTION 1.5 (competitive selection): different strand types competing for ribosomes (or for nucleotides) is naturally a finite-resource competition
+
+  Honest caveats:
+
+  - This is an existing research area. RNA-world simulations have been done extensively (Eigen hypercycles, Szostak's group, more recently Walker / Cronin assembly theory). Before
+  committing to building this, we'd want a serious prior-art audit — what's already been simulated, what's been measured, what zentropy specifically adds.
+  - Implementation cost is substantial vs Kachman's bonds. Probably 500-1000 lines for a minimum-viable RNA-ribosome sim with selection.
+  - It might be over-committing — we got real value from Kachman as a SIMPLE substrate where every piece is tractable. RNA-world might be too rich, where many phenomena compete and
+  isolating the zentropy claim becomes harder.
