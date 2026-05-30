@@ -293,10 +293,15 @@ begins.
 """
 
 
+import os
 import numpy as np
 from scipy.special import ive  # exp-scaled modified Bessel: ive(0, x) = exp(-x) * I_0(x)
                                 # numerically stable for the large-stretch regime where
                                 # exp(-x) underflows and I_0(x) overflows separately.
+
+import matplotlib
+matplotlib.use("Agg")           # non-interactive backend; we save PNGs, don't draw to a screen
+import matplotlib.pyplot as plt
 
 
 # ============================================================================
@@ -444,7 +449,7 @@ def catch_rates(d_ij, beta=BETA, k=K, epsilon=EPSILON, r_0=R_0):
 # Phase 1c — Gillespie on the graph state space
 # ============================================================================
 
-def gillespie_step(A, omega=OMEGA_D, rng=None):
+def gillespie_step(A, omega=OMEGA_D, F_drive=F, rng=None):
     """One Gillespie step on the Markov-on-graphs process:
       1. Solve the mechanics at current A → get d_ij for all pairs.
       2. Compute catch-bond rates for all pairs.
@@ -454,12 +459,15 @@ def gillespie_step(A, omega=OMEGA_D, rng=None):
       5. Sample which event by rate-weighted multinomial.
       6. Flip the bit in A.
 
+    F_drive=0 gives the undriven control (all d_ij=0, all pair rates equal,
+    random-graph equilibrium emerges).
+
     Returns (new_A, dt, event_type, (i, j)).
     """
     if rng is None:
         rng = np.random.default_rng()
 
-    d = steady_state_distances(A, omega=omega)
+    d = steady_state_distances(A, omega=omega, F=F_drive)
     r_form, r_break = catch_rates(d)
 
     # Per-pair rate: break if currently bonded, form if not
@@ -482,20 +490,30 @@ def gillespie_step(A, omega=OMEGA_D, rng=None):
     return new_A, dt, event_type, (int(i), int(j))
 
 
-def run_sim(n_steps=N_STEPS, A_init=None, omega=OMEGA_D, seed=None):
+def run_sim(n_steps=N_STEPS, A_init=None, omega=OMEGA_D, F_drive=F,
+            seed=None, spectrum_every=None):
     """Run a Gillespie simulation for up to n_steps events.
-    Returns (final_A, trajectory) where trajectory is a list of per-event
-    records: {step, t, event, ij, n_bonds}.
+
+    Returns (final_A, trajectory, spectrum) where:
+      - trajectory is a list of per-event records: {step, t, event, ij, n_bonds}
+      - spectrum is a list of (dt, frequencies) tuples (empty if
+        spectrum_every is None), sampled every spectrum_every steps;
+        dt is the time the network spent in this configuration before
+        the next event, suitable for occupancy weighting.
     """
     rng = np.random.default_rng(seed)
     A = np.zeros((N, N), dtype=int) if A_init is None else A_init.copy()
     t = 0.0
     trajectory = []
+    spectrum = []
     for step in range(n_steps):
-        new_A, dt, event_type, ij = gillespie_step(A, omega=omega, rng=rng)
+        new_A, dt, event_type, ij = gillespie_step(A, omega=omega,
+                                                    F_drive=F_drive, rng=rng)
         if event_type is None:
             print(f"[step {step}] no events available — stopping.")
             break
+        if spectrum_every and step % spectrum_every == 0:
+            spectrum.append((dt, normal_mode_frequencies(A)))
         t += dt
         A = new_A
         trajectory.append({
@@ -505,15 +523,99 @@ def run_sim(n_steps=N_STEPS, A_init=None, omega=OMEGA_D, seed=None):
             "ij":     ij,
             "n_bonds": int(A.sum() // 2),
         })
-    return A, trajectory
+    return A, trajectory, spectrum
 
 
 # ============================================================================
-# Phase 1d — reproduce Fig 2 (main text) + Fig S8 (supp) — STUBS
+# Phase 1d — reproduce Fig 2(a) — normal-mode spectrum, driven vs undriven
 # ============================================================================
-# Honesty test: run the sim across a sweep of ω_d and check that the absorbed
-# work shows a resonance peak (Fig 2). Fig S8 also needs the snap-bond rates,
-# deferred above.
+# Fig 2(a) (main text p3) plots P(ω), the distribution of normal-mode
+# frequencies, for two ensembles of the bond network:
+#   - undriven (F=0): random-graph haystack
+#   - driven (F>0, ω_d in the haystack range): haystack + extra peak at ω_d
+# The extra peak is the "self-organized resonance" headline. Reproducing it
+# is the honesty test that this reference impl is faithful to Kachman.
+# Fig S8 (snap-bond comparison) needs the snap-bond rates — deferred.
+
+def normal_mode_frequencies(A, m=M, k=K, k_0=K_0):
+    """Natural frequencies ω_i = √(λ_i/m) of the bond network's normal modes,
+    where λ_i are eigenvalues of K_stiff (the stiffness matrix built from A).
+
+    Each bond pattern A has N such frequencies; they collectively form the
+    network's "vibrational spectrum." Histogramming these over a long sim
+    trajectory (weighted by occupancy time) gives the ensemble distribution
+    P(ω) that Fig 2(a) plots.
+    """
+    K_stiff = stiffness_matrix(A, k=k, k_0=k_0)
+    eigenvalues = np.linalg.eigvalsh(K_stiff)            # sorted ascending
+    eigenvalues = np.clip(eigenvalues, 0.0, None)        # guard tiny-negative noise
+    return np.sqrt(eigenvalues / m)
+
+
+def spectrum_histogram(samples, n_bins=50, omega_max=3.0):
+    """Build an occupancy-weighted histogram of normal-mode frequencies from
+    spectrum samples (list of (dt, frequencies) tuples).
+
+    Returns (bin_edges, density) normalized so that Σ density * bin_width = 1.
+    """
+    bin_edges = np.linspace(0.0, omega_max, n_bins + 1)
+    if not samples:
+        return bin_edges, np.zeros(n_bins)
+    counts = np.zeros(n_bins)
+    total_weight = 0.0
+    for dt, freqs in samples:
+        h, _ = np.histogram(freqs, bins=bin_edges, weights=np.full_like(freqs, dt))
+        counts += h
+        total_weight += dt * len(freqs)
+    bin_width = bin_edges[1] - bin_edges[0]
+    return bin_edges, counts / (total_weight * bin_width)
+
+
+def save_spectrum_plot(samples_by_label, omega_d, out_path,
+                       n_bins=60, omega_max=4.0, ylim=(0.0, 1.0)):
+    """Save a P(ω) plot in the style of Kachman 2017 Fig S8.
+
+    samples_by_label : dict[str, list[(dt, frequencies)]]
+        Curves to overlay. Recognized label colors:
+          'catch'    → red
+          'snap'     → green
+          'undriven' → blue
+        Any other label is plotted in black.
+
+    The trivial rigid-body mode at ω = √(k_0/m) ≈ 0.1 spikes off-chart;
+    `ylim` clips it for legibility (matches the paper's plotting choice).
+    """
+    color = {"catch": "#c62828", "snap": "#2e7d32", "undriven": "#1565c0"}
+
+    fig, ax = plt.subplots(figsize=(7.5, 5.0), dpi=140)
+    for label, samples in samples_by_label.items():
+        edges, density = spectrum_histogram(samples,
+                                            n_bins=n_bins,
+                                            omega_max=omega_max)
+        centers = 0.5 * (edges[:-1] + edges[1:])
+        ax.plot(centers, density,
+                color=color.get(label, "black"),
+                linewidth=2.2,
+                label=label.title())
+
+    # Vertical drive-frequency marker
+    ax.axvline(omega_d, color="black", linewidth=0.8)
+    ax.text(omega_d, ylim[1] * 0.97, f" ω_d = {omega_d}",
+            fontsize=10, va="top", ha="left")
+
+    ax.set_xlabel(r"$\omega$", fontsize=14)
+    ax.set_ylabel(r"$\mathcal{P}(\omega)$", fontsize=14)
+    ax.set_xlim(0.0, omega_max)
+    ax.set_ylim(*ylim)
+    ax.legend(loc="upper right", frameon=False, fontsize=11)
+    ax.set_title(f"Kachman 2017 reproduction — normal-mode spectrum (ω_d = {omega_d})",
+                 fontsize=11)
+
+    fig.tight_layout()
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    fig.savefig(out_path)
+    plt.close(fig)
+    print(f"Saved: {out_path}")
 
 
 # === PHASE 2a: cluster-level coarse-graining of A ===
@@ -545,7 +647,7 @@ if __name__ == "__main__":
     print(f"Running {N_STEPS} Gillespie steps from empty graph...")
     print()
 
-    final_A, traj = run_sim(seed=42)
+    final_A, traj, _ = run_sim(seed=42)
 
     print(f"Final bond count: {int(final_A.sum() // 2)}")
     if traj:
@@ -555,6 +657,41 @@ if __name__ == "__main__":
         print(f"Events: {len(traj)} ({n_form} form, {n_break} break)")
     else:
         print("No events occurred (sim halted at step 0).")
+
+    # ========================================================================
+    # Phase 1d — Fig S8 reproduction: normal-mode spectrum, catch + undriven.
+    # (Snap curve — green in S8 — is next; needs snap-bond rates.)
+    # ========================================================================
+    print()
+    print("=" * 70)
+    print("Phase 1d — Fig S8 reproduction (catch + undriven; snap pending)")
+    print("=" * 70)
+    print()
+    OMEGA_FIG = 1.5   # Fig S8's drive frequency
+    print(f"Two runs ({N_STEPS} steps each), sampling spectrum every 10 steps, "
+          f"ω_d = {OMEGA_FIG}:")
+    print()
+
+    # Catch + drive (red in Fig S8)
+    _, _, samples_catch = run_sim(omega=OMEGA_FIG, F_drive=10.0,
+                                   seed=42, spectrum_every=10)
+    # Undriven control (blue in Fig S8)
+    _, _, samples_undriven = run_sim(omega=OMEGA_FIG, F_drive=0.0,
+                                      seed=43, spectrum_every=10)
+
+    # Drop ~10% burn-in from each
+    burn = max(1, len(samples_catch) // 10)
+    samples_catch    = samples_catch[burn:]
+    samples_undriven = samples_undriven[burn:]
+
+    save_spectrum_plot(
+        {"undriven": samples_undriven, "catch": samples_catch},
+        omega_d=OMEGA_FIG,
+        out_path="./out/kachman-fig-s8-reproduction.png",
+    )
+    print()
+    print("Honesty test: the CATCH spectrum should show an additional peak")
+    print(f"near ω_d = {OMEGA_FIG} that is NOT present in the undriven baseline.")
 
 
 # === PHASE 2a: cluster-level coarse-graining of A ===
