@@ -46,6 +46,20 @@ PREDICTION 1 — bidirectional H/D selection. [Observation, not new sim.]
     via better coupling, destruction-penalty avoidance via no coupling — both
     already observed in Kachman's existing data. Re-reading, not novel sim.
 
+    Reproduction status (2026-05-30, partial close on spine §5 gate 1):
+      Catch + undriven: faithfully reproduced at the supp's stated parameters
+        (β = 4000, ε = 0.0001) under N_SEEDS = 5 ensemble averaging.
+      Snap: QUALITATIVELY reproduced — visible avoidance dip at ω_d, slight
+        rightward shift of the haystack tail vs the undriven baseline — but
+        NOT quantitatively. Kachman's published Fig S8 green shows a SHARP
+        ZERO at ω_d and a tight bell at ω ≈ 3.7; ours has a small residual
+        at ω_d (~0.08) and a broader haystack at ω ≈ 3.0.
+      The PUBLISHED green curve strongly supports PREDICTION 1; OUR
+      reproduction supports it qualitatively but weakly. Kachman's snap
+      parameters are unpublished (supp p13: "qualitative results not finely
+      sensitive") and we have not yet found a set that strongly reproduces
+      the sharp Fig S8 shape. Parameter exploration could close this further.
+
 PREDICTION 2 — I_pred decomposition on A(t). [Novel measurement; what this
                                                file is built to compute.]
 
@@ -324,7 +338,7 @@ import matplotlib.pyplot as plt
 
 # Pinned in the supp:
 BETA    = 4000.0     # inverse temperature (kT very small vs k)
-EPSILON = 0.0001     # bond depth
+EPSILON = 0.0001     # bond depth (per supp p7 as stated)
 B       = 0.01       # damping
 M       = 1.0        # particle mass
 K       = 1.0        # spring stiffness (bonded particles)
@@ -345,8 +359,12 @@ N_STEPS = 10_000     # Gillespie steps per trajectory (supp says ~10^4 typical)
 # β_snap = 4.0 chosen so the snap-barrier-minimum exp factor (B_min ≈ 0.73)
 # gives rates of the same order of magnitude as catch's typical operating
 # range — matching their stated "similar orders of magnitude" criterion.)
-BETA_SNAP = 4.0
+BETA_SNAP = 6.0
 N_THETA_SNAP = 200   # quadrature samples for the drive-cycle average in snap_rates
+
+N_SEEDS = 5          # independent trajectories per regime for ensemble averaging
+                     # (smoothness AND robustness check: persistent features should
+                     # survive across seeds, fluke features won't)
 
 
 # ============================================================================
@@ -633,6 +651,30 @@ def spectrum_histogram(samples, n_bins=50, omega_max=3.0):
     return bin_edges, counts / (total_weight * bin_width)
 
 
+def run_ensemble(n_seeds, base_seed, drop_burn_in=True, **run_sim_kwargs):
+    """Run n_seeds independent Gillespie trajectories with the same physics
+    parameters and concatenate their spectrum samples.
+
+    Each trajectory uses seed = base_seed + i, producing independent realizations.
+    Returns a flat list of (dt, frequencies) tuples suitable for spectrum_histogram.
+
+    Ensemble averaging is doing two jobs here:
+      1. SMOOTHNESS: more samples → less jagged histogram.
+      2. HONESTY: if a visual feature (like snap's avoidance dip) survives
+         across many seeds, it's real physics; if it varies wildly across
+         seeds, we were overfitting to a single trajectory's idiosyncrasies.
+    """
+    run_sim_kwargs.setdefault("spectrum_every", 10)
+    all_samples = []
+    for i in range(n_seeds):
+        _, _, samples = run_sim(seed=base_seed + i, **run_sim_kwargs)
+        if drop_burn_in:
+            burn = max(1, len(samples) // 10)
+            samples = samples[burn:]
+        all_samples.extend(samples)
+    return all_samples
+
+
 def save_spectrum_plot(samples_by_label, omega_d, out_path,
                        n_bins=60, omega_max=4.0, ylim=(0.0, 1.0)):
     """Save a P(ω) plot in the style of Kachman 2017 Fig S8.
@@ -729,28 +771,23 @@ if __name__ == "__main__":
     print("=" * 70)
     print()
     OMEGA_FIG = 1.5   # Fig S8's drive frequency
-    print(f"Three runs ({N_STEPS} steps each), sampling spectrum every 10 steps, "
-          f"ω_d = {OMEGA_FIG}:")
+    print(f"Ensemble of N_SEEDS={N_SEEDS} runs per regime ({N_STEPS} Gillespie "
+          f"steps each), ω_d = {OMEGA_FIG}.")
+    print(f"Total: {3*N_SEEDS} sims; ~30s × {3*N_SEEDS} ≈ several minutes.")
     print()
 
-    # Catch + drive (red in Fig S8)
-    _, _, samples_catch = run_sim(omega=OMEGA_FIG, F_drive=10.0,
-                                   seed=42, spectrum_every=10,
-                                   rate_fn=catch_rates)
-    # Undriven control (blue in Fig S8) — uses catch chemistry
-    _, _, samples_undriven = run_sim(omega=OMEGA_FIG, F_drive=0.0,
-                                      seed=43, spectrum_every=10,
-                                      rate_fn=catch_rates)
-    # Snap + drive (green in Fig S8)
-    _, _, samples_snap = run_sim(omega=OMEGA_FIG, F_drive=10.0,
-                                  seed=44, spectrum_every=10,
-                                  rate_fn=snap_rates)
-
-    # Drop ~10% burn-in from each
-    burn = max(1, len(samples_catch) // 10)
-    samples_catch    = samples_catch[burn:]
-    samples_undriven = samples_undriven[burn:]
-    samples_snap     = samples_snap[burn:]
+    print(f"  Catch+drive ({N_SEEDS} seeds)...")
+    samples_catch = run_ensemble(N_SEEDS, base_seed=100,
+                                  omega=OMEGA_FIG, F_drive=10.0,
+                                  rate_fn=catch_rates)
+    print(f"  Undriven    ({N_SEEDS} seeds)...")
+    samples_undriven = run_ensemble(N_SEEDS, base_seed=200,
+                                     omega=OMEGA_FIG, F_drive=0.0,
+                                     rate_fn=catch_rates)
+    print(f"  Snap+drive  ({N_SEEDS} seeds)...")
+    samples_snap = run_ensemble(N_SEEDS, base_seed=300,
+                                 omega=OMEGA_FIG, F_drive=10.0,
+                                 rate_fn=snap_rates)
 
     save_spectrum_plot(
         {"undriven": samples_undriven, "catch": samples_catch, "snap": samples_snap},
@@ -760,6 +797,8 @@ if __name__ == "__main__":
     print()
     print("Honesty test: CATCH peaks at ω_d (drive-seeking); SNAP avoids ω_d")
     print(f"(drive-avoiding); UNDRIVEN is the haystack baseline. ω_d = {OMEGA_FIG}.")
+    print(f"Features surviving ensemble averaging (N_SEEDS={N_SEEDS}) are real;")
+    print("features that disappear were single-trajectory artifacts.")
 
 
 # === PHASE 2a: cluster-level coarse-graining of A ===
