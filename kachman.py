@@ -209,7 +209,15 @@ PREDICTION 4 — acquisition cost vs storage cost decoupling. [Refinement of
 
     The thermal-half tests, ordered by intrusiveness:
 
-    4a. CUMULATIVE-DISSIPATION KNEE.  [Existing trajectory data.]
+    4a. CUMULATIVE-DISSIPATION KNEE.  [Needs W_diss instrumentation in
+                                       run_sim, then re-run; no substrate
+                                       changes.]
+        Note: kachman_lib.run_sim's trajectory dict currently tracks
+        {step, t, event, ij, n_bonds} — W_diss is NOT tracked. To
+        compute this, extend the trajectory dict with per-interval
+        W_absorbed and Q_dissipated (the W and Q already implicit in the
+        catch_rates / snap_rates Arrhenius integrals over each Gillespie
+        interval; ~5 lines of instrumentation).
         Plot ∫ W_diss dτ vs t for the catch-driven run. Does the slope
         show a steeper initial period (the acquisition transient — the
         red box in Fig S2, t ∈ [0, ~500]) followed by a lower steady-
@@ -219,11 +227,17 @@ PREDICTION 4 — acquisition cost vs storage cost decoupling. [Refinement of
         appear at the molecular regime where the framework is best
         anchored; the reframe is dead at substrate.
 
-    4b. MARGINAL  dI / dW_diss  DECLINE.  [Existing data + Phase 2 machinery.]
-        For each Gillespie step, compute incremental structural-encoding
-        gain (Phase 2's I_pred, or near-term the I(A_feature ; ω_d) of
-        measure_drive_encoding.py) divided by incremental W_diss since
-        the previous step. Plot the ratio vs t.
+    4b. MARGINAL  dI / dW_diss  DECLINE.  [Needs 4a's W_diss instrumentation
+                                           plus a per-window I estimator;
+                                           can use measure_drive_encoding's
+                                           I(A_feature ; ω_d) as near-term
+                                           substitute for proper I_pred
+                                           before Phase 2 lands.]
+        For each Gillespie window, compute incremental structural-
+        encoding gain (Phase 2's I_pred when it lands; near-term the
+        I(A_feature ; ω_d) of measure_drive_encoding.py) divided by
+        incremental W_diss since the previous window. Plot the ratio
+        vs t.
         Prediction: HIGH early — structure laid down on top of nothing
         is cheap per bit. DECLINING as the system fills its niche, toward
         a steady-state floor (maintenance).
@@ -257,14 +271,27 @@ PREDICTION 4 — acquisition cost vs storage cost decoupling. [Refinement of
         proportional to "amount of bank to refill"; no qualitative re-
         learning threshold exists in this substrate.
 
-    Scheduling note. 4a and 4b are decompositions of EXISTING trajectory
-    data (4b uses Phase 2's I_pred machinery once it lands, but the
-    near-term version using measure_drive_encoding.py's
-    I(A_feature ; ω_d) is also informative). They sit as Phase 2.5 — after
-    Phase 2, before Phase 3. 4c and 4d need NEW Kachman runs but no
-    substrate changes; they slot alongside Phase 3 work. Per feedback-
-    sim-first: run 4a and 4b first because they're nearly free; only
-    invest in 4c/4d if 4a or 4b shows the predicted shape.
+    Scheduling note — PREDICTION numbers group by zentropy claim and are
+    NOT a build sequence. PREDICTION 4 sub-tests slot across multiple
+    phases. Realistic build order (small to large):
+
+      Phase 1.5  (after Phase 1d reproduction lands):
+        - 4a needs ~5 lines of W_diss instrumentation in run_sim, then
+          re-run the catch trajectories used for Fig S2.
+        - 4c / 4d need only a runner script that does
+          drive → equilibrate (F = 0) → drive cycles. No substrate or
+          physics changes. Could run in parallel with 4a.
+
+      Phase 2.5  (after 4a's W_diss instrumentation + a per-window I
+                  estimator — either Phase 2's I_pred or the near-term
+                  I(A_feature ; ω_d) substitute):
+        - 4b becomes computable. Per feedback-sim-first: defer 4b unless
+          4a shows a knee, since 4b is downstream of 4a's claim.
+
+    Build the cheapest test first — 4a is the shortest path to ANY
+    PREDICTION-4-relevant result. 4c/4d become worth the runner-script
+    investment IF 4a confirms the knee. 4b waits on a per-window I
+    estimator regardless.
 
     Term-audit TODO (per feedback-coined-terms). "Adversarial floor" is
     descriptive but not standard literature vocabulary. Grossman-Stiglitz
@@ -486,14 +513,45 @@ if __name__ == "__main__":
     print("features that disappear were single-trajectory artifacts.")
 
 
-# === PHASE 2a: cluster-level coarse-graining of A ===
+# === PHASE 1.5  (NEAR-TERM, after Phase 1d reproduction lands) ===
+# PREDICTION numbers (1–4) group by zentropy claim; PHASE numbers reflect
+# build order. PREDICTION 4 sub-tests deliberately span multiple phases.
+
+# === PHASE 1.5a (PREDICTION 4a): instrument W_diss in run_sim's trajectory
+#                 dict (~5 lines: per-interval W_absorbed + Q_dissipated from
+#                 the Arrhenius integrals already in catch_rates / snap_rates).
+#                 Then re-run a catch trajectory and plot ∫ W_diss dτ vs t.
+#                 Does the slope show a transient (acquisition) vs steady-state
+#                 (maintenance) split? Shortest path to ANY PREDICTION-4 result. ===
+
+
+# === PHASE 1.5b (PREDICTION 4c): hysteresis runner — drive → equilibrate
+#                 (F = 0) → drive at the same ω_d. Compare first vs second
+#                 transient duration and cumulative W_diss. No substrate or
+#                 physics changes; just a runner script. ===
+
+
+# === PHASE 1.5c (PREDICTION 4d): quench-depth runner — Phase-1.5b variant
+#                 sweeping equilibration duration. Plot re-acquisition cost
+#                 vs fraction-of-structure-lost. Non-linear curve confirms;
+#                 linear scaling falsifies. ===
+
+
+# === PHASE 2a: cluster-level coarse-graining of A — see Phase 2 plan above ===
 
 
 # === PHASE 2b: I_mem and I_pred estimators ===
 # === FILL FROM PAPER === (still-2012-thermodynamics-of-prediction.pdf)
 
 
-# === PHASE 2c: I_pred(evolutionary time) curves across regimes ===
+# === PHASE 2c: I_pred(evolutionary time) curves across regimes — PREDICTION 2 ===
+
+
+# === PHASE 2.5  (PREDICTION 4b): marginal dI / dW_diss(t).
+#                Needs Phase 1.5a's W_diss instrumentation + a per-window I
+#                estimator (Phase 2b's I_pred when it lands, or near-term
+#                measure_drive_encoding's I(A_feature ; ω_d)). Defer unless
+#                Phase 1.5a shows the knee. ===
 
 
 # === PHASE 3a: storage channel + reproduction event on pacman-drive sim ===
@@ -506,30 +564,3 @@ if __name__ == "__main__":
 
 
 # === PHASE 3d: document outcome — third strategy emerges or load-bearing falsification ===
-
-
-# === PHASE 4 — acquisition cost vs storage cost decoupling (spine.md §7) ===
-# Tests the thermal half of the cost-per-acquired-bit ≈ max(thermal, adversarial)
-# decomposition. Adversarial half is out of scope for kachman.py (single-substrate,
-# no competing predictors).
-
-# === PHASE 4a: cumulative-dissipation knee — does ∫ W_diss dτ show
-#               transient (acquisition) vs steady-state (maintenance) slope split?
-#               Existing trajectory data; no new sim runs needed. ===
-
-
-# === PHASE 4b: marginal dI / dW_diss(t) — does the bits-per-joule ratio
-#               decline from high (early acquisition) to low (steady-state
-#               maintenance)? Uses Phase 2's I_pred, or near-term
-#               measure_drive_encoding.py's I(A_feature ; ω_d). ===
-
-
-# === PHASE 4c: hysteresis test — drive → equilibrate → drive again.
-#               Is the second transient shorter / cheaper than the first?
-#               New runs; no substrate changes. ===
-
-
-# === PHASE 4d: quench-depth test — sweep equilibration duration to
-#               vary fraction-of-structure-lost; plot re-acquisition cost
-#               against loss. Non-linear curve confirms; linear scaling
-#               falsifies. ===
