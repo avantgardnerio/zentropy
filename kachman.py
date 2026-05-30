@@ -174,6 +174,103 @@ PREDICTION 3 — storage channel + M-axis sweep locates the abiogenesis
     BOTH the central zentropy claim AND the abiogenesis-as-phase-transition
     framing in spine.md §6 [OPEN].
 
+PREDICTION 4 — acquisition cost vs storage cost decoupling. [Refinement of
+                                                              Still's bound;
+                                                              spine.md §7.]
+
+    Standard Landauer / Bennett / Still accounting focuses on the cost of
+    STORING or erasing a bit. At molecular substrates, storage and
+    acquisition are inseparable — the medium IS the thermal bath, so the
+    marginal cost of one more predictive bit is approximately the Landauer
+    floor either way. At higher scales the two DECOUPLE: a hard drive's
+    per-bit storage cost is many orders above Landauer but amortizes to
+    near-zero per relevant transaction, while the cost to IDENTIFY which
+    bit to store (acquisition cost) rises because it is set endogenously
+    by competing predictors (Grossman & Stiglitz 1980; Van Valen 1973
+    Red Queen).
+
+    Zentropy reframe (Brent, 2026-05-30): selection grades agents on cost-
+    to-ACQUIRE the next predictive bit, not on cost-to-STORE. Storage was
+    a reliable proxy at the molecular regime where the two coincide; it
+    fails at higher scales. spine.md §7 carries the full statement.
+
+    Cost decomposition (provisional):
+
+        cost-per-acquired-bit ≈ max(thermal floor, adversarial floor)
+            thermal floor    = k_B T · ln 2  (Landauer; physics-set)
+            adversarial floor= marginal competing predictor's per-bit
+                               expenditure  (Grossman-Stiglitz form;
+                               population-set)
+
+    Kachman is single-substrate with no competing predictors → only the
+    THERMAL HALF of the claim is testable here. The adversarial half
+    awaits multi-agent / multi-niche substrates (still.py with heritable-
+    kernel competition, or pacman with multiple agents).
+
+    The thermal-half tests, ordered by intrusiveness:
+
+    4a. CUMULATIVE-DISSIPATION KNEE.  [Existing trajectory data.]
+        Plot ∫ W_diss dτ vs t for the catch-driven run. Does the slope
+        show a steeper initial period (the acquisition transient — the
+        red box in Fig S2, t ∈ [0, ~500]) followed by a lower steady-
+        state slope (maintenance)? The excess area above a steady-state-
+        extrapolation line is the acquisition cost in joules.
+        Falsification: no knee → storage/acquisition decoupling does not
+        appear at the molecular regime where the framework is best
+        anchored; the reframe is dead at substrate.
+
+    4b. MARGINAL  dI / dW_diss  DECLINE.  [Existing data + Phase 2 machinery.]
+        For each Gillespie step, compute incremental structural-encoding
+        gain (Phase 2's I_pred, or near-term the I(A_feature ; ω_d) of
+        measure_drive_encoding.py) divided by incremental W_diss since
+        the previous step. Plot the ratio vs t.
+        Prediction: HIGH early — structure laid down on top of nothing
+        is cheap per bit. DECLINING as the system fills its niche, toward
+        a steady-state floor (maintenance).
+        Falsification: flat ratio → acquisition cost ≈ steady-state cost;
+        the distinction is not load-bearing in this substrate.
+
+    4c. HYSTERESIS TEST.  [New runs.]
+        Drive (acquire) → equilibrate (F = 0, long enough that the bond
+        network reverts toward equilibrium statistics) → re-drive at the
+        same ω_d. Compare transient duration and cumulative dissipation
+        during transient for the FIRST vs SECOND drive episode.
+        Prediction: substrate retains latent topology bias from the first
+        drive → second transient is SHORTER and/or CHEAPER.
+        Falsification: identical first and second transients → re-
+        acquisition is path-independent; "cost-to-re-learn" has no
+        substrate-level traction.
+
+    4d. QUENCH-DEPTH TEST.  [New runs.]
+        Drive to steady state. Then re-equilibrate for VARYING durations
+        (sweep equilibration time short / medium / long, sampling the
+        spectrum of "fraction of structure lost"). Re-drive. Plot re-
+        acquisition cost (∫ W_diss dτ during second transient) against
+        fraction-of-structure-lost (measured by some structural distance
+        from the original steady state — bond-count delta, or spectral
+        distance, both will work).
+        Prediction: NON-LINEAR curve — small losses are cheap to re-
+        acquire, large losses approach full acquisition cost from
+        scratch. The closest molecular analog to "re-acquiring predictive
+        learning costs X."
+        Falsification: linear scaling → acquisition cost is simply
+        proportional to "amount of bank to refill"; no qualitative re-
+        learning threshold exists in this substrate.
+
+    Scheduling note. 4a and 4b are decompositions of EXISTING trajectory
+    data (4b uses Phase 2's I_pred machinery once it lands, but the
+    near-term version using measure_drive_encoding.py's
+    I(A_feature ; ω_d) is also informative). They sit as Phase 2.5 — after
+    Phase 2, before Phase 3. 4c and 4d need NEW Kachman runs but no
+    substrate changes; they slot alongside Phase 3 work. Per feedback-
+    sim-first: run 4a and 4b first because they're nearly free; only
+    invest in 4c/4d if 4a or 4b shows the predicted shape.
+
+    Term-audit TODO (per feedback-coined-terms). "Adversarial floor" is
+    descriptive but not standard literature vocabulary. Grossman-Stiglitz
+    1980 use "information acquisition cost"; biology side uses "Red Queen
+    cost." Audit before promoting any of these tests to write-up.
+
 ================================================================================
 MODEL SPEC (from supp pp 3-7)
 ================================================================================
@@ -409,3 +506,30 @@ if __name__ == "__main__":
 
 
 # === PHASE 3d: document outcome — third strategy emerges or load-bearing falsification ===
+
+
+# === PHASE 4 — acquisition cost vs storage cost decoupling (spine.md §7) ===
+# Tests the thermal half of the cost-per-acquired-bit ≈ max(thermal, adversarial)
+# decomposition. Adversarial half is out of scope for kachman.py (single-substrate,
+# no competing predictors).
+
+# === PHASE 4a: cumulative-dissipation knee — does ∫ W_diss dτ show
+#               transient (acquisition) vs steady-state (maintenance) slope split?
+#               Existing trajectory data; no new sim runs needed. ===
+
+
+# === PHASE 4b: marginal dI / dW_diss(t) — does the bits-per-joule ratio
+#               decline from high (early acquisition) to low (steady-state
+#               maintenance)? Uses Phase 2's I_pred, or near-term
+#               measure_drive_encoding.py's I(A_feature ; ω_d). ===
+
+
+# === PHASE 4c: hysteresis test — drive → equilibrate → drive again.
+#               Is the second transient shorter / cheaper than the first?
+#               New runs; no substrate changes. ===
+
+
+# === PHASE 4d: quench-depth test — sweep equilibration duration to
+#               vary fraction-of-structure-lost; plot re-acquisition cost
+#               against loss. Non-linear curve confirms; linear scaling
+#               falsifies. ===

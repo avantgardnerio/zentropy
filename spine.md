@@ -236,6 +236,40 @@ Falsification conditions:
 
 ---
 
+## 7. Acquisition cost vs. storage cost **[OPEN — 2026-05-30; falsification path in `kachman.py` PREDICTION 4]**
+
+Standard information-thermodynamic accounting (Landauer 1961; Bennett 1982) focuses on the thermodynamic cost of *storing* or erasing bits. At the molecular regime, storage and acquisition are inseparable — the medium holding the bit IS the thermal bath, so the marginal cost of an additional predictive bit is approximately the Landauer floor regardless of which side you account against.
+
+At higher scales the two decouple. A modern hard drive's per-bit storage cost is many orders of magnitude above Landauer but amortizes to near-zero per relevant transaction; the binding cost migrates to the *acquisition* side — the dissipation required to identify *which* bit to store. Information economics (Grossman & Stiglitz 1980) and evolutionary theory (Van Valen 1973, Red Queen) both observe that in competitive settings the acquisition cost is set endogenously by the marginal competing predictor's expenditure, not by a physical floor.
+
+**Working claim (Brent, 2026-05-30; not yet derived):** selection grades agents on the cost to *acquire* the next predictive bit, not on the cost to *store* it. Storage cost was a reliable proxy at the molecular regime where the two coincide; at higher scales the proxy fails. This refines `feedback-bank-not-cash`'s storage-as-bank framing — the bank is the *receipt* of past acquisition; selection grades against the price of *adding to* the bank, which is regime-dependent.
+
+**Cost-floor decomposition (provisional form):**
+
+> cost-per-acquired-bit ≈ $\max(\text{thermal floor}, \text{adversarial floor})$
+
+- **Thermal floor:** $\sim k_B T \ln 2$ (Landauer). Physics-set; dominant when no competing predictor exists.
+- **Adversarial floor:** the marginal competing predictor's per-bit expenditure (Grossman-Stiglitz form). Population-set; dominant when competing structures bid for the same gradient.
+
+The two floors swap dominance with substrate. At molecular substrates with no competing predictor, only the thermal floor applies. At any scale with competing predictors, the adversarial floor dominates.
+
+**Abiogenesis hook (orthogonal-mechanism complement to §6).** The adversarial floor is endogenous to the population of existing predictors. Pre-life Earth had adversarial floor $\approx 0$ — only the thermal floor applied, and the first predictive dissipators paid Landauer prices for their structure. Once life exists, the adversarial floor rises for any nascent would-be predictor competing for the same gradients. This gives a thermodynamic argument for abiogenesis difficulty in present conditions that is distinct from chemistry-specific arguments: the floor that the first replicators paid was lower than any subsequent one. §6's $M^*$ crossover and §7's adversarial-floor-rises mechanism are not in competition — they describe the same threshold from different lenses (when does replication pay vs. how does the cost floor rise once it does).
+
+**Falsifiability via Kachman (`kachman.py` PREDICTION 4).** Kachman is single-substrate with no competing predictors, so only the **thermal half** of the claim is testable here; the adversarial half awaits multi-agent substrates. Four tests, ordered by how much new sim work they need:
+
+1. **Cumulative-dissipation knee** (existing trajectory data) — does $\int W_\text{diss}\,d\tau$ for the catch-driven run show a steeper initial slope during the acquisition transient (the Fig S2 red box) and a lower steady-state slope after? The excess area is the acquisition cost.
+2. **Marginal $dI/dW_\text{diss}$ decline** (existing data + Phase 2 machinery) — does the bits-of-structure-per-joule ratio decline as the system fills its niche, toward a steady-state maintenance floor?
+3. **Hysteresis test** (new runs) — drive → equilibrate → drive again at the same $\omega_d$. Is the second transient shorter or cheaper than the first, indicating retained structural memory?
+4. **Quench-depth test** (new runs) — drive to steady state, partially equilibrate (varying durations), re-drive. Is re-acquisition cost non-linear in the fraction of structure lost?
+
+Falsification: no knee in (1) kills the substrate-level reframe; flat marginal ratio in (2) means acquisition and steady-state costs are indistinguishable; absence of hysteresis in (3) or linear quench-depth scaling in (4) means re-acquisition is path-independent and the "cost-to-re-learn" framing has no Kachman-level handle. Per `feedback-sim-first`: run 4a and 4b first because they're nearly free; only invest in 4c/4d if either shows the predicted shape.
+
+**Term-audit TODO** (per `feedback-coined-terms`). *Acquisition cost* and *storage cost* are established literature vocabulary (Grossman-Stiglitz 1980; Bennett 1982). *Thermal floor* is descriptive. *Adversarial floor* is borderline-coined — Grossman-Stiglitz themselves use "information acquisition cost"; the biology side uses "Red Queen cost." Audit before promoting any of this section to write-up form.
+
+**Connections.** Refines `feedback-bank-not-cash`'s storage-as-bank framing; supplies the molecular falsification path before the cross-scale claim (currently `[[strategic-england-darwin-bridge]]` in private memory) can be promoted to artifact; orthogonal-mechanism complement to §6's $M^*$ crossover; tightens §5's window framing by identifying *which side of the window* selection actually grades on.
+
+---
+
 ## TBD — naming choice
 
 Throughout §3, **"global scope"** is a placeholder for the level above agent-scope. Brent flagged 2026-05-28: "universe" is overused and not formal. Candidate replacements (awaiting your pick — then propagate throughout doc and relevant memories):
