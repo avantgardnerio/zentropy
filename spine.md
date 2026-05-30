@@ -72,6 +72,10 @@ The framework is unit-flexible: write $N$ in joules when working thermodynamical
 
 **Note on older drafts:** in earlier zentropy writing, $N$ was sometimes used to mean *inbound flux alone* ($H$), and the partition was written as $N = D_\text{boundary} + \dot E_\text{stored} + D_\text{downstream}$. **That overload is abandoned as of 2026-05-28.** From here: $N \equiv \int(H-D)dt$, $H$ is the inbound-flux symbol, $D$ is the boundary-dissipation symbol. Downstream routing is treated at the global scope (§3), not as a sub-partition of $N$.
 
+**Note on $H$ — Kachman 2017 correspondence and the integration floor (added 2026-05-30).** In the passive (non-predictive) limit, $H$ is the *absorbed work* $W$ of Kachman, Owen & England 2017 (PRL 119, 038001): gross work flux from external drive into the system. Their cluster-level $W$ — work absorbed by the collective resonant mode, not by individual particles or individual bonds — is the closest analog to "the agent's $H$." Single-particle and single-bond $W$ are below the integration floor.
+
+**The integration floor is physical, not a modeling choice.** $H$, $D$, $N$ are well-defined only at scales whose state can carry $I_\text{pred}$ — scales with enough internal degrees of freedom to mutual-inform with the future drive. A single particle cannot (no memory). A single bond in Kachman's regime carries $\sim 1$ bit of configurational state but does not phase-lock to drive. The resonant cluster *does*. So the smallest valid integration scope is the lowest-scale order-parameter degree of freedom (Prigogine 1977's "macroscopic variables") with nonzero $I_\text{pred}$ capacity. Above this floor the integration scale is a modeling choice; below it the central quantity is undefined. The $I_\text{pred}$-capacity criterion is zentropy's refinement on the prior-art order-parameter language.
+
 ---
 
 ## 3. $\Delta N$ at the **global scope** **[OPEN — formulation in development; FRAMING UNDER RECONSIDERATION 2026-05-28]**
