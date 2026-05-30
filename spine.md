@@ -173,9 +173,56 @@ An agent's $N$ — its lifetime bank balance, the integral from §2 — is exact
 - A living system maintains $H > D$ with surplus routed into stored order: $W > 0$ sustained, surplus accumulates as $N$.
 - A dying system has $H < D$: $W < 0$, depletion, $N$ falling.
 
+**Empirical anchor — Kachman 2017 as structural test (added 2026-05-30).** Kachman, Owen & England 2017 (PRL 119, 038001) is a pure-dissipator substrate by construction: no storage channel beyond bounded spring potential, so energy conservation forces $\langle H \rangle \approx \langle D \rangle$ at steady state and $W \approx 0$ throughout. The two regimes reported — catch bonds (max-$H$ operating point) and snap bonds (min-$D$ operating point, supp Fig S8) — are both pure-dissipator strategies on the $W \approx 0$ line; the $\max(H - D) > 0$ strategy this section identifies with life cannot emerge in Kachman's setup because the substrate cannot store. If a storage channel is added and a third selection strategy with sustained $W > 0$ does *not* emerge alongside catch/snap, this section's framing fails on its own terms. Reference-impl + storage-extension build: `kachman.py` (2026-05-30; see `project-ipred-pivot` and `project-reference-impl-opportunity`).
+
 The earlier $W = [P_l, P_u]$ range framing (lower = survival floor, upper = $I_\text{pred}$-set saturation ceiling) is consistent with this: $P_l$ is the forced-$D$ floor, $P_u$ is the gross-$H$ ceiling, the *width* $P_u - P_l$ at instant $t$ is exactly $W(t) = H - D$.
 
 > **Interpretation flag — needs Brent's confirmation:** I'm reading "an agent's $\Delta N$ is the integral over time of its window size at any one moment" as $W(t) = H(t) - D(t)$ and $\Delta N_\text{agent} = \int W\, dt$. If you meant window *width* of a range $[P_l, P_u]$ that differs from $H - D$, the math reconciles slightly differently. Confirm or correct.
+
+---
+
+## 6. Abiogenesis as $M$-axis phase transition **[OPEN — claim 2026-05-30; prior-art audit pending]**
+
+> ⚠️ **TODO — prior-art audit before this section becomes paper-grade.** The *phase-transition* framing of abiogenesis is established in the literature; what may be novel here is the *specific* crossover variable ($M$ = environmental drive complexity) tied to the *specific* Still 2012 bound $W_\text{diss} \geq k_B T(I_\text{mem} - I_\text{pred})$. Verify against:
+> - Walker, S. I. & Davies, P. C. W. 2013, *J. R. Soc. Interface* 10:20120869, "The algorithmic origins of life" — information-theoretic OoL framing.
+> - Smith, E. & Morowitz, H. J., *The Origin and Nature of Life on Earth* (2016); Smith's solo papers on origin-of-life-as-planetary-phase-transition.
+> - Vanchurin, V. & Koonin, E. V. 2022, *PNAS* "Thermodynamics of evolution and origin of life" — already in `papers/`, in `[[reference-sim-literature-landscape]]`.
+> - Possibly nearby: Eigen hypercycles; Kauffman 1993 *Origins of Order* autocatalytic-set thresholds; Walker assembly-theory papers (post-2020).
+>
+> Locate zentropy's specific contribution in the gap (if any). If the Still-bounded $M^*$-crossover is already published in essentially this form, cite and cut; if not, this is a candidate publishable slot.
+
+**The argument.**
+
+For an agent embedded in a driven environment of complexity $M$ (the number of incommensurate components of the drive; see $N^*(M)$ framing in `[[project-sim-england-state]]`):
+
+- **Strategy A (no inheritance):** each agent discovers its predictive kernel from scratch within its own lifetime via Still-bounded selection on configurations. The dissipative cost of discovery scales with the kernel size required for the environment, which by the pacman-drive prediction is $N^* \approx 2M$ bits.
+- **Strategy B (heritable kernel + replication machinery):** pay a fixed upfront cost $K$ for replication machinery (substrate-dependent; Landauer-priced bits required to encode the copy mechanism); daughters inherit the parent's kernel without rediscovery.
+
+Strategy A is selected when discovering the kernel is cheaper than building+running replication machinery. Strategy B is selected when the per-generation rediscovery cost exceeds the amortized cost of replication. The crossover defines:
+
+> $M^* \equiv$ the environmental complexity at which Strategy B first becomes thermodynamically favored over Strategy A.
+
+> ⚠️ **TODO — exact form of $M^*$.** The crossover formula has a clean qualitative shape (A grows in $M$, B has a floor) but the precise functional form depends on substrate-dependent constants and on assumptions about discovery-vs-copy bit cost. Tentative form $M^* \sim K / (c \cdot k_B T)$ with $c$ a substrate-dependent per-bit cost requires derivation. Either land it analytically in this section or supply it empirically from `kachman.py` Phase 3 (see below).
+
+**Interpretation.**
+
+Abiogenesis is a phase transition in environmental complexity $M$, not a contingent chemical event. Below $M^*$, predictive dissipative structures (catch-bond clusters; Kachman 2017) exist and are selected, but replication is not. Above $M^*$, replication is thermodynamically favored — heritable kernels amortize Still-discovery cost across generations. $M^*$ is substrate-dependent (different $K$ and $c$ per substrate); the *crossover existence* is the substrate-agnostic claim.
+
+**Falsifiability.**
+
+The $M$-axis sweep is built into `kachman.py` Phase 3 (2026-05-30): vary $M$ in the pacman-drive variant; locate the $M$ at which the storage-enabled regime first beats pure-dissipator catch/snap. That $M$ is $M^*$ for the Kachman substrate.
+
+Falsification conditions:
+- No third strategy emerges at any $M$ → §5's framing fails (already flagged in §5).
+- Third strategy emerges but $M^*$ does not scale with $K$ → this section's specific crossover argument is wrong in form even if the qualitative phenomenon is real.
+- $M^*$ scales but in a way unrelated to Still's $I_\text{nonpred}$ bound → the crossover may be real but not the one zentropy claims.
+
+**Connections.**
+
+- Supplies the missing mechanism for §1a's "where non-living dissipators leave exergy unconsumed" — translates the existing thesis-as-intuition into a specific thermodynamic crossover.
+- Tightens §4 (Life): predictive dissipative structures exist at all $M$; *life with replication* — the colloquial sense — emerges at $M^*$. The catch-bond cluster (Kachman 2017) is an $M < M^*$ exemplar. See `[[zentropy-life-definition]]` for the tiered framing.
+- Test instrument: `kachman.py` Phase 3 with the pacman-drive variant (see `[[project-ipred-pivot]]`).
+- Astrobiological prediction: simple-environment planets (small $M$) → catch-bond-like proto-life forever, no replicators. Complex-environment planets (large $M$, e.g. Earth) → replicators thermodynamically inevitable. Falsifiable in principle, not in practice on human timescales.
 
 ---
 
