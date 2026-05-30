@@ -33,6 +33,9 @@ F_DRIVE        = 10.0                          # drive amplitude
 N_SEEDS_LOCAL  = 3                             # ensembles per ω_d (3 for speed)
 N_STEPS_LOCAL  = 5_000                         # Gillespie steps per seed
 BURN_FRACTION  = 0.1                           # drop first 10% of each trajectory
+N_REPLICATES   = 5                             # independent ensemble replicates
+                                               # (different base_seed offsets) for
+                                               # estimating simulation variance of MI
 
 
 # ============================================================================
@@ -134,65 +137,83 @@ if __name__ == "__main__":
     print(f"  Steps per seed   = {N_STEPS_LOCAL}")
     print(f"  Feature          = bond count (n_bonds at each Gillespie step)")
     print(f"  Burn fraction    = {BURN_FRACTION}")
+    print(f"  Replicates       = {N_REPLICATES}")
     print()
 
-    # Catch
-    print("Running CATCH ensemble...")
-    x_catch, y_catch = collect_bond_counts(
-        catch_rates, F_drive=F_DRIVE,
-        omega_d_values=OMEGA_D_VALUES, base_seed=1000,
-    )
-    mi_catch = binned_mi(x_catch, y_catch)
+    mis = []   # list of (mi_catch, mi_snap, mi_un) per replicate
 
-    # Snap
-    print("Running SNAP ensemble...")
-    x_snap, y_snap = collect_bond_counts(
-        snap_rates, F_drive=F_DRIVE,
-        omega_d_values=OMEGA_D_VALUES, base_seed=2000,
-    )
-    mi_snap = binned_mi(x_snap, y_snap)
+    for rep in range(N_REPLICATES):
+        offset = 100_000 * (rep + 1)
+        print(f"--- Replicate {rep+1}/{N_REPLICATES} (base_seed offset = {offset}) ---")
 
-    # Undriven control: F=0, so the rates are independent of ω_d.
-    # The ω_d label is meaningless physically (the drive is off at every label),
-    # so MI should be ≈ 0 — pure baseline.
-    print("Running UNDRIVEN control (F=0)...")
-    x_un, y_un = collect_bond_counts(
-        catch_rates, F_drive=0.0,
-        omega_d_values=OMEGA_D_VALUES, base_seed=3000,
-    )
-    mi_un = binned_mi(x_un, y_un)
+        # Catch
+        x_catch, y_catch = collect_bond_counts(
+            catch_rates, F_drive=F_DRIVE,
+            omega_d_values=OMEGA_D_VALUES, base_seed=1000 + offset,
+        )
+        mi_catch = binned_mi(x_catch, y_catch)
 
-    print()
-    print("Per-ω_d bond-count distributions (mean ± std, n samples):")
-    print()
-    print(f"  {'ω_d':>5} | {'CATCH':>20} | {'SNAP':>20} | {'UNDRIVEN':>20}")
-    print(f"  {'-'*5} | {'-'*20} | {'-'*20} | {'-'*20}")
-    dist_catch = per_omega_distribution(x_catch, y_catch, OMEGA_D_VALUES)
-    dist_snap  = per_omega_distribution(x_snap,  y_snap,  OMEGA_D_VALUES)
-    dist_un    = per_omega_distribution(x_un,    y_un,    OMEGA_D_VALUES)
-    for (od, mc, sc, nc), (_, ms, ss, ns), (_, mu, su, nu) in zip(
-        dist_catch, dist_snap, dist_un
-    ):
-        print(f"  {od:5.2f} | {mc:7.2f} ± {sc:5.2f} (n={nc:5d}) | "
-              f"{ms:7.2f} ± {ss:5.2f} (n={ns:5d}) | "
-              f"{mu:7.2f} ± {su:5.2f} (n={nu:5d})")
+        # Snap
+        x_snap, y_snap = collect_bond_counts(
+            snap_rates, F_drive=F_DRIVE,
+            omega_d_values=OMEGA_D_VALUES, base_seed=2000 + offset,
+        )
+        mi_snap = binned_mi(x_snap, y_snap)
 
+        # Undriven control (F=0): MI should be ≈ 0 — baseline
+        x_un, y_un = collect_bond_counts(
+            catch_rates, F_drive=0.0,
+            omega_d_values=OMEGA_D_VALUES, base_seed=3000 + offset,
+        )
+        mi_un = binned_mi(x_un, y_un)
+
+        mis.append((mi_catch, mi_snap, mi_un))
+        print(f"  catch = {mi_catch:.4f}  snap = {mi_snap:.4f}  undriven = {mi_un:.4f}")
+
+        # Print per-ω_d distribution table for the first replicate only
+        # (sanity check; subsequent replicates omit to keep output readable)
+        if rep == 0:
+            print()
+            print("  Per-ω_d bond-count distributions (replicate 1, mean ± std):")
+            print(f"    {'ω_d':>5} | {'CATCH':>16} | {'SNAP':>16} | {'UNDRIVEN':>16}")
+            print(f"    {'-'*5} | {'-'*16} | {'-'*16} | {'-'*16}")
+            dist_catch = per_omega_distribution(x_catch, y_catch, OMEGA_D_VALUES)
+            dist_snap  = per_omega_distribution(x_snap,  y_snap,  OMEGA_D_VALUES)
+            dist_un    = per_omega_distribution(x_un,    y_un,    OMEGA_D_VALUES)
+            for (od, mc, sc, _), (_, ms, ss, _), (_, mu, su, _) in zip(
+                dist_catch, dist_snap, dist_un
+            ):
+                print(f"    {od:5.2f} | {mc:7.2f} ± {sc:5.2f}  | "
+                      f"{ms:7.2f} ± {ss:5.2f}  | {mu:7.2f} ± {su:5.2f}")
+        print()
+
+    # ------------------------------------------------------------------
+    # Summary across replicates
+    # ------------------------------------------------------------------
+    mis = np.array(mis)
+    means = mis.mean(axis=0)
+    stds  = mis.std(axis=0)
+
+    print("=" * 70)
+    print(f"Summary across {N_REPLICATES} independent ensemble replicates")
+    print("=" * 70)
     print()
-    print("Mutual information I(bond_count ; ω_d), in bits:")
+    print(f"  Regime    |   mean MI    |    std MI    | individual replicates")
+    print(f"  --------  | -----------  | -----------  | ---------------------")
+    for label, idx in [("CATCH", 0), ("SNAP", 1), ("UNDRIVEN", 2)]:
+        indiv = "  ".join(f"{v:.4f}" for v in mis[:, idx])
+        print(f"  {label:8s}  | {means[idx]:.4f}      | {stds[idx]:.4f}      | {indiv}")
     print()
-    print(f"  CATCH    : {mi_catch:.4f}")
-    print(f"  SNAP     : {mi_snap:.4f}")
-    print(f"  UNDRIVEN : {mi_un:.4f}")
+
+    # Compare catch vs snap with respect to their variability
+    diff_mean = means[0] - means[1]
+    diff_std  = np.sqrt(stds[0]**2 + stds[1]**2)   # approx combined std
+    print(f"  catch − snap = {diff_mean:+.4f} ± {diff_std:.4f} bits")
+    print(f"  (positive favors the original prediction; negative means snap > catch)")
     print()
-    print("Pre-registered prediction: catch > snap > undriven ≈ 0.")
+    print(f"  catch / undriven = {means[0] / max(means[2], 1e-9):.1f}× baseline")
+    print(f"  snap  / undriven = {means[1] / max(means[2], 1e-9):.1f}× baseline")
     print()
-    if mi_catch > mi_snap > mi_un:
-        print("✓ Prediction supported by THIS run.")
-    elif mi_catch > mi_un and mi_snap > mi_un:
-        print("△ Partial: both catch and snap above undriven baseline, "
-              "but catch-vs-snap ordering not strict here.")
-    else:
-        print("✗ Prediction NOT supported by THIS run — flag for review.")
-    print()
-    print("Note: bond count is a 1-D feature. If catch-vs-snap are close, "
-          "try richer features (spectrum peak, joint with mean ω-mode).")
+    print("Note: bond count is a 1-D feature and probably the wrong observable")
+    print("for testing the half-space-vs-point asymmetry. This run estimates")
+    print("the VARIANCE so we know whether snap > catch is real noise or signal.")

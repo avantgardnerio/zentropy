@@ -498,3 +498,14 @@ Bennett 2003, physics/0210005v2. Saved to papers/bennett-2003-landauer-and-maxwe
   - Implementation cost is substantial vs Kachman's bonds. Probably 500-1000 lines for a minimum-viable RNA-ribosome sim with selection.
   - It might be over-committing — we got real value from Kachman as a SIMPLE substrate where every piece is tractable. RNA-world might be too rich, where many phenomena compete and
   isolating the zentropy claim becomes harder.
+                                        
+---
+
+  - Molecular scale (~30-100× Landauer): framework bites literally; Still's bound is real selection pressure
+  - Cell scale (~15× Landauer per generation): still real, just barely
+  - Brain/SSD (~10⁵-10⁷× Landauer): joules-per-bit cost is trivial relative to total energy budget; framework's joules-currency becomes irrelevant
+  - AI training (~10²¹× Landauer): energy is not the bottleneck; the cost-currency is GPU-hours / data / attention
+
+  Captures your "$0.000001 per bit" intuition with the actual numbers (you were high by ~6 orders for SSD hardware; the reality at macro scale is even more "bits are free than you
+  thought"). And captures the right takeaway: foundation paper stays molecular (where the bound is literal); downstream papers translate the currency for macro-scale extrapolations.
+
