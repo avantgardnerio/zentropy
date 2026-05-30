@@ -389,3 +389,20 @@ Bennett 2003, physics/0210005v2. Saved to papers/bennett-2003-landauer-and-maxwe
   Realistic timeline for finding a Boltzmann-undergrad: 1–3 months of casting. Not nothing, but bounded.
 
   Worth doing in parallel with the reading. The right collaborator at the right moment could compress your 12-month timeline to 6.
+                                                          
+---
+
+  - Zentropy isn't ready for external disclosure yet — Still reading isn't done, the formal arguments aren't there, the prior-art audit (Walker & Davies / Smith / Vanchurin-Koonin)
+  hasn't happened. A cold-email zentropy pitch lands as half-baked, and you don't get a second chance at the first impression.
+  - The technical contribution (first open-source reimpl + the partial Fig S8 reproduction + the catch/snap question) IS publishable substance on its own. That establishes you as a
+  serious physics implementer first. Zentropy can come later, after the relationship is established and after the framework has more rigor.
+  - It preserves optionality — if he turns out to be uninterested in foundations work, you've still got a useful technical contact. If he turns out to be interested, you've earned the
+   right to bring it up by demonstrating competence.
+
+  Suggested tight email scope (your draft, not mine to write):
+  1. "We did what appears to be the first open-source reimpl of your 2017 sim — github link"
+  2. "Fig 2(a) and the catch curve of Fig S8 reproduce faithfully at the supp's stated parameters under ensemble averaging"
+  3. "We're partially reproducing snap but couldn't quite get the sharp zero at ω_d / the tight bell at ω ≈ 3.7. Did you record the snap β value? The supp notes the parameters as 'not
+   finely sensitive' but we're seeing meaningful sensitivity."
+  4. "Also curious if anyone has followed up on (a) why the snap distribution is more peaked than the undriven baseline and (b) the inverse correlation between catch's peak position
+  (at ω_d) and snap's (well away from ω_d) — both observations are striking but undeveloped in the supp."
