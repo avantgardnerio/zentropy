@@ -406,3 +406,54 @@ Bennett 2003, physics/0210005v2. Saved to papers/bennett-2003-landauer-and-maxwe
    finely sensitive' but we're seeing meaningful sensitivity."
   4. "Also curious if anyone has followed up on (a) why the snap distribution is more peaked than the undriven baseline and (b) the inverse correlation between catch's peak position
   (at ω_d) and snap's (well away from ω_d) — both observations are striking but undeveloped in the supp."
+
+---
+
+❯ make a note, we'll pursue 1 next. But I want to ask you: if we had the reversable VM, would kachman's work stand as a bunch of op-codes adjacent in a bath? i.e. these 3 are next to
+   each other, they encode SLEEP x, PREDICT, GOTO 1. These other ones encode SLEEP y, PREDICT, GOTO 1. These other ones encode: SLEEP z, PREDICT, SET i = 0, CPY self[i] -> child[i];
+  CND_JMP if i > z; goto 4, else goto 0?
+  
+● This is a real bridge, and it lights up something you'd already designed but we pivoted away from.
+
+  The mapping is structurally clean:
+
+  ┌─────────────────────────────┬───────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │           Kachman           │                                           Reversible VM                                           │
+  ├─────────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ N particles in a bath       │ N op-code carriers (tokens) in a bath                                                             │
+  ├─────────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Bond between i,j            │ Adjacency / execution link between op-codes                                                       │
+  ├─────────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Adjacency matrix A          │ The current "program" structure                                                                   │
+  ├─────────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Drive F·sin(ω_d·t)          │ Clock / external work source the program runs against                                             │
+  ├─────────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Catch bonds resonate at ω_d │ Programs containing PREDICT, GOTO loop on the drive period — they "persist" by being in sync      │
+  ├─────────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Snap bonds avoid ω_d        │ Programs that AVOID running the predict loop at drive frequency (anti-resonance = anti-execution) │
+  ├─────────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Storage / reproduction      │ Programs that include CPY/COND_JMP — i.e., replicator op-codes                                    │
+  ├─────────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Bond stability under drive  │ Programs that don't get rewritten by thermal noise during execution                               │
+  └─────────────────────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+  Your three program-classes map cleanly:
+  - SLEEP x; PREDICT; GOTO 1 = catch bond cluster at ω that matches x's period — pure tracking, no replication
+  - SLEEP y; PREDICT; GOTO 1 = same shape, different tuning (different bond cluster, different resonance)
+  - The third with CPY self[i] -> child[i]; CND_JMP i > z; ... = replicator (Phase 3 territory)
+
+  This is essentially your old opcode-tape design from [[project-sim-england-state]] — which we pivoted away from for "bottom-up purity" (not presupposing replicators). But your
+  question reveals the move was partly an artifact of the framing: the opcode-tape substrate isn't presupposing replicators if you just don't include CPY in the initial op-code set.
+  It's substrate-agnostic, and more expressive than bonds for testing different kinds of programs (predictors, avoidance-only, replicators, mixed).
+
+  Why this matters for what we just learned about Kachman's substrate:
+
+  We've been finding that Kachman's bonds may be too coarse to test I_pred (slow dynamics, limited per-mode resolution). A reversible-VM opcode-tape substrate might be cleaner:
+  - More expressive program space than bond topology
+  - Cleaner reading of "what is this program doing" (op-codes are discrete and labeled)
+  - CPY can be added as one extra op-code, not a whole new sim tier
+  - I_pred is well-defined on the program-state trajectory directly
+
+  Honest caveat: the analogy is structural, not dynamical. Bonds have specific oscillator-mode physics; op-code execution has different dynamics. Whether the same Still-bound / W_diss
+   ≥ kT(I_mem − I_pred) form applies identically across both substrates needs care — they probably share the bound (it's substrate-agnostic) but not the constants.
+
