@@ -15,6 +15,8 @@ Zentropy has two layers. **Special** is settled enough to write up; **General** 
 
 The central open question (see §3): how agent-scope $N$ and global-scope $\Delta N$ relate. We believe selection drives them into alignment; this is the prediction the spatial sim is built to test.
 
+**Publication aim (added 2026-05-30).** A stat-mech paper on the molecular work alone is publishable on its own merit. The actual goal is broader: **bridge two communities — non-equilibrium thermodynamics (England-line dissipative adaptation) and evolutionary biology (Darwinian selection) — that currently treat their selection mechanisms as separate phenomena.** Zentropy's contribution: these are the same selection function operating on a scale-invariant quantity (predictive information per unit dissipation), evaluated in different cost-currency units at different substrates. The molecular work earns the right to make this bridge claim; the bridge is what makes the paper matter beyond its substrate. Discipline: molecular evidence in Results (rigorous, anchored); bridge claim in Discussion (interpretive, hedged). Framing detail in `[[strategic-england-darwin-bridge]]` (private memory).
+
 ---
 
 ## 1. Thesis
