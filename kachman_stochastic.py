@@ -214,11 +214,13 @@ def save_time_series_plot(trajectory, spectrum, out_path,
 
     # For each spectrum sample, collect ALL non-trivial modes (skip the
     # rigid-body modes at ω ≈ √(k_0/m) ≈ 0.1 by filtering above 0.3).
-    # Drop the first 10% of samples as burn-in: the empty-graph initial
-    # transient pours hundreds of spectrum samples into the first time bin
-    # while bonds rapidly form, which auto-saturates the heatmap colormap.
-    burn = max(1, len(spectrum) // 10)
-    spectrum_eq = spectrum[burn:]
+    # Drop a burn-in BY TIME (not by iteration count): the empty-graph
+    # initial transient pours many spectrum samples into a tiny time window
+    # (events happen in small dt's while bonds rapidly form), which
+    # auto-saturates the heatmap colormap. Drop the first 10% of TOTAL
+    # simulated time — what matters for the histogram bins.
+    total_t = trajectory[-1]["t"]
+    t_burn = 0.1 * total_t
     spec_t       = []
     spec_omega   = []
     mode_t       = []
@@ -226,16 +228,14 @@ def save_time_series_plot(trajectory, spectrum, out_path,
     cum_t = 0.0
     for (dt, freqs, om) in spectrum:
         cum_t += dt
-        if len(spec_t) < burn:
-            # still in burn-in; advance time but don't record
-            spec_t.append(None)
+        if cum_t < t_burn:
             continue
         spec_t.append(cum_t)
         spec_omega.append(om)
         for f in freqs[freqs > 0.3]:
             mode_t.append(cum_t)
             mode_omega.append(f)
-    spec_t     = np.array([s for s in spec_t if s is not None])
+    spec_t     = np.array(spec_t)
     spec_omega = np.array(spec_omega)
     mode_t     = np.array(mode_t)
     mode_omega = np.array(mode_omega)
@@ -259,20 +259,25 @@ def save_time_series_plot(trajectory, spectrum, out_path,
 
     # Bottom — 2D histogram (heatmap) of non-trivial network modes vs time,
     # with ω(t) overlaid. Dark bands ≡ regions of mode density. If the
-    # network is tracking, a dark band should follow the purple ω(t) line.
+    # network is tracking, a dark band should follow the cyan ω(t) line.
+    # Histogram range starts at t_burn (skipping the equilibration transient).
     if len(mode_t):
-        t_min, t_max = (t.min() if len(t) else 0.0), (t.max() if len(t) else 1.0)
         n_time_bins, n_omega_bins, omega_max = 150, 80, 4.0
         H, xedges, yedges = np.histogram2d(
             mode_t, mode_omega,
             bins=[n_time_bins, n_omega_bins],
-            range=[[t_min, t_max], [0.0, omega_max]],
+            range=[[t_burn, total_t], [0.0, omega_max]],
         )
-        # Use a sequential colormap; higher counts → darker
+        # Use a sequential colormap; higher counts → darker. Clip vmax at the
+        # 99th percentile of nonzero counts so outlier hot spots don't wash out
+        # the steady-state structure.
+        nonzero = H[H > 0]
+        vmax = np.percentile(nonzero, 99) if nonzero.size else None
         axes[2].pcolormesh(xedges, yedges, H.T,
-                           cmap="magma_r", shading="auto")
+                           cmap="magma_r", shading="auto", vmax=vmax)
         axes[2].plot(spec_t, spec_omega, color="cyan", linewidth=1.2,
                      label="ω(t) drive", alpha=0.9)
+        axes[2].set_xlim(t_burn, total_t)
         axes[2].set_ylim(0, omega_max)
         axes[2].legend(loc="upper right", fontsize=9, frameon=False)
     axes[2].set_ylabel("network mode ω")
