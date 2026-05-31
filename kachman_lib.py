@@ -218,6 +218,58 @@ def snap_rates(d_ij, beta=BETA_SNAP, k=K, epsilon=EPSILON, r_0=R_0,
 
 
 # ============================================================================
+# Phase 1.5a — energy accounting: steady-state absorbed work and dissipated heat
+# (for PREDICTION 4a — cumulative-dissipation knee; see kachman.py docstring §7)
+# ============================================================================
+
+def steady_state_power(A, omega=OMEGA_D, F_drive=F, i_drive=I_DRIVE,
+                       m=M, b=B, k=K, k_0=K_0):
+    """Time-averaged absorbed-work and dissipated-heat rates at the steady
+    state of the damped-driven oscillator network with fixed bond network A.
+
+    Derivation, following the same chain as steady_state_distances:
+
+      1. Decompose into normal modes (eigendecomp of K_stiff = U diag(λ) U^T).
+      2. Per-mode complex amplitude under drive F sin(ωt) at particle i_drive:
+              z_i_amp = F · U[i_drive, i] / D_i,    D_i = λ_i − m ω² + i b ω
+      3. Per-mode time-averaged dissipated power (Landau & Lifshitz Mechanics
+         §25; standard for any linear damped-driven oscillator):
+              <P_Q,i> = (1/2) b ω² |z_i_amp|²
+      4. Energy balance at steady state (no storage channel in Kachman's setup
+         — bonded spring potential is bounded; see spine.md §5 "pure-dissipator
+         substrate"):
+              <P_W> = <P_Q>     (sum over modes)
+
+    Returns (P_W, P_Q) — both equal at steady state, returned as two values for
+    bookkeeping symmetry with H, D in spine.md §2.
+
+    === FILL FROM PAPER === — supp p4 derives the steady-state mechanics but
+    not the per-cycle energy budget in closed form. The formula above is
+    standard, but verify the b·ω² normalization against the supp's damping
+    convention before relying on ABSOLUTE numbers. The knee SHAPE in
+    PREDICTION 4a (transient slope vs steady-state slope) is robust to this
+    normalization; absolute units are not.
+
+    F_drive = 0 returns (0, 0) — the undriven case has zero steady-state
+    absorbed work and zero damping-driven dissipation at this scale.
+
+    Note on redundancy: this duplicates the eigendecomp inside
+    steady_state_distances. For a 20×20 matrix this is microseconds and not
+    worth refactoring; if the I_pred decomposition ever needs the same z_i
+    per Gillespie step, fold the two helpers into one.
+    """
+    if F_drive == 0:
+        return 0.0, 0.0
+    K_stiff = stiffness_matrix(A, k=k, k_0=k_0)
+    eigenvalues, U = np.linalg.eigh(K_stiff)
+    f_modes = F_drive * U[i_drive, :]                          # shape (N,)
+    denom = eigenvalues - m * omega**2 + 1j * b * omega        # shape (N,) complex
+    z_modes = f_modes / denom
+    P_Q = 0.5 * b * omega**2 * float(np.sum(np.abs(z_modes)**2))
+    return P_Q, P_Q   # P_W = P_Q at steady state (passive-limit energy balance)
+
+
+# ============================================================================
 # Phase 1c — Gillespie on the graph state space
 # ============================================================================
 
@@ -268,7 +320,25 @@ def run_sim(n_steps=N_STEPS, A_init=None, omega=OMEGA_D, F_drive=F,
     """Run a Gillespie simulation for up to n_steps events.
 
     Returns (final_A, trajectory, spectrum) where:
-      - trajectory is a list of per-event records: {step, t, event, ij, n_bonds}
+      - trajectory is a list of per-event records:
+          {step, t, event, ij, n_bonds, dW, dQ, W_cum, Q_cum}
+        dW, dQ = work absorbed / heat dissipated during the interval ending
+                 at this event (using the steady-state power of the
+                 configuration that was in place BEFORE the event fired,
+                 multiplied by dt).
+        W_cum, Q_cum = cumulative through this step (joules · time-units of ω).
+        At steady state and in the passive limit, dW ≈ dQ per interval and
+        W_cum ≈ Q_cum cumulatively (energy balance, no storage channel —
+        spine.md §5).
+
+        Energy-accounting caveat: this records the steady-state-power-
+        integrated work and heat ONLY. The discrete potential-energy jump
+        at each bond form/break event (ΔU into / out of the bond network's
+        elastic + bond-depth energy) is NOT yet added. The first-pass knee
+        analysis for PREDICTION 4a (spine.md §7) should be robust to this
+        omission because dW and dQ track the dominant flow under steady-
+        state drive; bond-event ΔU is a refinement to revisit if the knee
+        shape comes out ambiguous.
       - spectrum is a list of (dt, frequencies) tuples (empty if
         spectrum_every is None), sampled every spectrum_every steps;
         dt is the time the network spent in this configuration before
@@ -279,9 +349,16 @@ def run_sim(n_steps=N_STEPS, A_init=None, omega=OMEGA_D, F_drive=F,
     rng = np.random.default_rng(seed)
     A = np.zeros((N, N), dtype=int) if A_init is None else A_init.copy()
     t = 0.0
+    W_cum = 0.0
+    Q_cum = 0.0
     trajectory = []
     spectrum = []
     for step in range(n_steps):
+        # Steady-state power for the configuration A IS IN BEFORE this event
+        # fires. A stays fixed for the interval of duration dt; energy flows
+        # at the steady-state rate during that interval.
+        P_W, P_Q = steady_state_power(A, omega=omega, F_drive=F_drive)
+
         new_A, dt, event_type, ij = gillespie_step(A, omega=omega,
                                                     F_drive=F_drive, rng=rng,
                                                     rate_fn=rate_fn)
@@ -290,14 +367,23 @@ def run_sim(n_steps=N_STEPS, A_init=None, omega=OMEGA_D, F_drive=F,
             break
         if spectrum_every and step % spectrum_every == 0:
             spectrum.append((dt, normal_mode_frequencies(A)))
+
+        dW = P_W * dt
+        dQ = P_Q * dt
+        W_cum += dW
+        Q_cum += dQ
         t += dt
         A = new_A
         trajectory.append({
-            "step":   step,
-            "t":      t,
-            "event":  event_type,
-            "ij":     ij,
+            "step":    step,
+            "t":       t,
+            "event":   event_type,
+            "ij":      ij,
             "n_bonds": int(A.sum() // 2),
+            "dW":      dW,
+            "dQ":      dQ,
+            "W_cum":   W_cum,
+            "Q_cum":   Q_cum,
         })
     return A, trajectory, spectrum
 
