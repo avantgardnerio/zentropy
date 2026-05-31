@@ -51,7 +51,10 @@ from kachman_lib import run_sim, catch_rates, spectrum_histogram
 # Configuration
 # ============================================================================
 
-N_STEPS  = 10_000
+N_STEPS  = 50_000   # bumped from 10k to test the metastability hypothesis
+                    # raised by chunk 9 shatter at 10k (see
+                    # strategic-kachman-skepticism memory). Cycle period
+                    # observable; re-acquisition resolvable.
 SEED     = 42
 OMEGA_D  = 1.5
 F_DRIVE  = 10.0
