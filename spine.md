@@ -214,6 +214,8 @@ Strategy A is selected when discovering the kernel is cheaper than building+runn
 
 > ⚠️ **TODO — exact form of $M^*$.** The crossover formula has a clean qualitative shape (A grows in $M$, B has a floor) but the precise functional form depends on substrate-dependent constants and on assumptions about discovery-vs-copy bit cost. Tentative form $M^* \sim K / (c \cdot k_B T)$ with $c$ a substrate-dependent per-bit cost requires derivation. Either land it analytically in this section or supply it empirically from `kachman.py` Phase 3 (see below).
 
+> ⚠️ **TODO — substrate-primitive prerequisite (2026-06-17).** The A-vs-B binary presupposes substrates where storage capacity exists somewhere to be inherited. A candidate intermediate Strategy A.5 (storage-capable, non-replicating) may need separating before the M* crossover is well-posed; if real, §6 becomes a three-strategy phase diagram. Substrate test sketch (bistable bonds + non-harmonic drive) in `[[project-kachman-bistable-extension]]`; not committed.
+
 **Interpretation.**
 
 Abiogenesis is a phase transition in environmental complexity $M$, not a contingent chemical event. Below $M^*$, predictive dissipative structures (catch-bond clusters; Kachman 2017) exist and are selected, but replication is not. Above $M^*$, replication is thermodynamically favored — heritable kernels amortize Still-discovery cost across generations. $M^*$ is substrate-dependent (different $K$ and $c$ per substrate); the *crossover existence* is the substrate-agnostic claim.

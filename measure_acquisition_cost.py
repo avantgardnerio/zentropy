@@ -60,6 +60,7 @@ OMEGA_D  = 1.5
 F_DRIVE  = 10.0
 OUT_PATH                  = "./out/kachman-acquisition-cost-knee.png"
 OUT_PATH_SPECTRUM_EVOLVE  = "./out/kachman-spectrum-evolution.png"
+OUT_PATH_DRIVE_ALIGNMENT  = "./out/kachman-dissipation-vs-drive-alignment.png"
 
 # Spectrum evolution sampling: take a P(ω) "snapshot" by binning all
 # spectrum samples within each CHUNK_SIZE_STEPS window. Each chunk gives
@@ -390,6 +391,149 @@ def save_spectrum_evolution_plot(spectrum_samples, traj, omega_d, out_path,
     print(f"Saved: {out_path}")
 
 
+def save_dissipation_vs_drive_alignment_plot(traj, spectrum, omega_d, out_path,
+                                              chunk_size_steps=CHUNK_SIZE_STEPS,
+                                              spectrum_every=SPECTRUM_EVERY,
+                                              n_bins=SPECTRUM_N_BINS,
+                                              omega_max=SPECTRUM_OMEGA_MAX):
+    """Visualize the snap event as a simultaneous spike in dissipation rate
+    AND drop in spectral distance from the drive frequency, plotted against
+    STEP NUMBER (not time, so the snap isn't compressed by the heterogeneous
+    dt distribution).
+
+    Two panels, shared step-number x-axis:
+      Top:    mean P_Q per chunk (dissipation rate)
+      Bottom: spectral distance from ω_d per chunk (|peak_ω - ω_d|)
+
+    The visual story: at the snap event, P_Q spikes upward AND distance
+    drops to zero. At a drive-lost excursion, P_Q drops AND distance rises
+    back up. The two signals should be inversely correlated, and the
+    snap-event spike in P_Q is the "dissipation cost to earn a bit"
+    that's invisible on the time-axis knee chart.
+
+    Marks chunks classified as RESONANT (P(ω_d) ≥ 0.5 AND peak at ω_d ±
+    0.2) and DRIVE-LOST (peak at ω < 0.3, outside build-up).
+    """
+    samples_per_chunk = max(1, chunk_size_steps // spectrum_every)
+
+    # Per-chunk metrics
+    chunk_centers  = []   # step number at center of chunk (x-coordinate)
+    chunk_PQ       = []   # mean P_Q in this chunk (dQ_sum / dt_sum)
+    chunk_distance = []   # |peak_ω - ω_d| from the chunk's P(ω) histogram
+    chunk_P_at_wd  = []   # P(ω_d) — alt metric, "bit-acquired-ness"
+    chunk_class    = []   # 'resonant' | 'lost' | 'buildup' | 'other'
+
+    n_chunks = len(spectrum) // samples_per_chunk
+    for ci in range(n_chunks):
+        # Spectrum samples in this chunk
+        s_start = ci * samples_per_chunk
+        chunk_specs = spectrum[s_start:s_start + samples_per_chunk]
+        if not chunk_specs:
+            continue
+
+        # Step-number window for this chunk
+        step_start = ci * chunk_size_steps
+        step_end   = min(step_start + chunk_size_steps, len(traj))
+        chunk_centers.append(0.5 * (step_start + step_end))
+
+        # P_Q in this chunk = total dQ / total dt
+        dQ_sum = sum(traj[k]["dQ"] for k in range(step_start, step_end))
+        if step_start > 0:
+            dt_sum = traj[step_end - 1]["t"] - traj[step_start - 1]["t"]
+        else:
+            dt_sum = traj[step_end - 1]["t"]
+        chunk_PQ.append(dQ_sum / dt_sum if dt_sum > 0 else 0.0)
+
+        # Spectral peak location and P(ω_d) via the same histogram method
+        edges, density = spectrum_histogram(chunk_specs, n_bins=n_bins,
+                                              omega_max=omega_max)
+        centers = 0.5 * (edges[:-1] + edges[1:])
+        pk_w  = float(centers[int(np.argmax(density))])
+        p_wd  = float(density[int(np.argmin(np.abs(centers - omega_d)))])
+        chunk_distance.append(abs(pk_w - omega_d))
+        chunk_P_at_wd.append(p_wd)
+
+        # Classification
+        if 1.3 <= pk_w <= 1.7 and p_wd >= 0.5:
+            chunk_class.append("resonant")
+        elif pk_w < 0.3 and p_wd < 0.15:
+            # build-up vs lost: build-up is consecutive starting from chunk 0
+            chunk_class.append("buildup" if ci < 5 else "lost")
+        else:
+            chunk_class.append("other")
+
+    chunk_centers  = np.array(chunk_centers)
+    chunk_PQ       = np.array(chunk_PQ)
+    chunk_distance = np.array(chunk_distance)
+    chunk_P_at_wd  = np.array(chunk_P_at_wd)
+
+    fig, axes = plt.subplots(2, 1, figsize=(11, 6.5), dpi=140, sharex=True)
+
+    # ---- Top panel: P_Q per chunk -----------------------------------------
+    axes[0].plot(chunk_centers, chunk_PQ, color="#c62828", lw=1.4, marker="o",
+                  ms=3, label="<P_Q> per chunk")
+    axes[0].axhline(0, color="gray", lw=0.5)
+    axes[0].set_ylabel("dissipation rate  <P_Q>")
+    axes[0].set_title(f"Dissipation vs drive-alignment, per {chunk_size_steps}-step "
+                       f"chunk (ω_d = {omega_d}); x-axis = step number")
+
+    # Annotate the snap event (first transition from low to high P_Q)
+    # Find the first chunk where P_Q jumps above some fraction of its peak
+    if len(chunk_PQ) > 1:
+        peak_PQ = chunk_PQ.max()
+        snap_threshold = 0.3 * peak_PQ
+        snap_idx = next((i for i, v in enumerate(chunk_PQ)
+                          if v > snap_threshold), None)
+        if snap_idx is not None:
+            snap_step = chunk_centers[snap_idx]
+            axes[0].axvline(snap_step, color="#1565c0", lw=1.0, ls="--",
+                             label=f"first snap (step ≈ {int(snap_step)})")
+
+    axes[0].legend(loc="upper right", frameon=False)
+
+    # ---- Bottom panel: distance from drive --------------------------------
+    axes[1].plot(chunk_centers, chunk_distance, color="black", lw=1.4,
+                  marker="o", ms=3, label="|peak_ω − ω_d|")
+    axes[1].axhline(0, color="gray", lw=0.5)
+    axes[1].set_ylabel("spectral distance from ω_d")
+    axes[1].set_xlabel("Gillespie step number")
+
+    # Shade post-classification chunks for the eye
+    for ci, cls in enumerate(chunk_class):
+        if cls == "lost":
+            axes[0].axvspan(ci * chunk_size_steps,
+                             (ci + 1) * chunk_size_steps,
+                             color="#9c27b0", alpha=0.18)
+            axes[1].axvspan(ci * chunk_size_steps,
+                             (ci + 1) * chunk_size_steps,
+                             color="#9c27b0", alpha=0.18)
+    # Build-up shading
+    axes[0].axvspan(0, 5 * chunk_size_steps, color="#1565c0", alpha=0.08,
+                     label="_nolegend_")
+    axes[1].axvspan(0, 5 * chunk_size_steps, color="#1565c0", alpha=0.08)
+
+    # Mark snap on bottom panel too
+    if 'snap_idx' in dir() and snap_idx is not None:
+        axes[1].axvline(snap_step, color="#1565c0", lw=1.0, ls="--")
+
+    # Add a manual legend for the shaded regions
+    from matplotlib.patches import Patch
+    legend_patches = [
+        Patch(facecolor="#1565c0", alpha=0.08, label="build-up (chunks 0-4)"),
+        Patch(facecolor="#9c27b0", alpha=0.18, label="drive-lost excursions"),
+    ]
+    axes[1].legend(handles=legend_patches + [
+        plt.Line2D([0], [0], color="black", lw=1.4, marker="o", ms=3,
+                    label="|peak_ω − ω_d|"),
+    ], loc="upper right", frameon=False)
+
+    fig.tight_layout()
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    fig.savefig(out_path)
+    plt.close(fig)
+    print(f"Saved: {out_path}")
+
+
 # ============================================================================
 # Main
 # ============================================================================
@@ -459,3 +603,10 @@ if __name__ == "__main__":
           f"{CHUNK_SIZE_STEPS} steps each.")
     save_spectrum_evolution_plot(spectrum, traj=traj, omega_d=OMEGA_D,
                                   out_path=OUT_PATH_SPECTRUM_EVOLVE)
+
+    print()
+    print("Dissipation vs drive-alignment plot (step-number x-axis so snap "
+          "isn't compressed by heterogeneous dt)...")
+    save_dissipation_vs_drive_alignment_plot(traj=traj, spectrum=spectrum,
+                                              omega_d=OMEGA_D,
+                                              out_path=OUT_PATH_DRIVE_ALIGNMENT)

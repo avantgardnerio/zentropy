@@ -417,6 +417,19 @@ Phase 3: storage channel + M-axis sweep → locate abiogenesis threshold M*.
         outcome — load-bearing falsification of a major zentropy claim,
         sharpening or killing the framework.
 
+Phase 3-prequel candidate (2026-06-17 — not committed): a bistable-bond
+substrate variant sits between Phase 2 (single-well, structural encoding) and
+Phase 3 (storage channel + replication via Gillespie copy). Adds one parameter
+(double-well barrier height) to the bond potential and replaces the single
+sinusoid with two non-harmonic sines at incommensurate ratio. Tests whether
+storage CAPACITY alone (no replication) lets the substrate encode joint drive
+structure across cycles — i.e. whether a "Strategy A.5" (storage-capable,
+non-replicating) regime exists distinct from Strategy A. If yes, §6's binary
+A-vs-B crossover may need a three-strategy refinement; if no, the direct jump
+from single-well to replication remains the right shape. Discussion + caveats
+in [[project-kachman-bistable-extension]]; not promoted to spine.md prose per
+[[feedback-prose-formality]].
+
 Each phase must run and reproduce its target result before the next phase is
 built ([[feedback-foundation-first]]).
 
