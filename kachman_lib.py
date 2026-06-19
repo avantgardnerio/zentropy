@@ -45,7 +45,12 @@ OMEGA_D = 1.5        # drive frequency (the Fig S8 value; main text sweeps this)
 # NOT pinned in the supp — defaults are reasonable guesses, revise from main
 # text figure captions:
 N       = 20         # number of particles (Quanta 2017 reports "20 particles")
-K_0     = 0.01       # weak confining potential constant (small relative to k)
+K_0     = 0.0        # confining potential constant. Kachman doesn't pin this in
+                     # the supp, but his Fig S8 shows the rigid-body translation
+                     # spike sitting at ω = 0, implying k_0 = 0 (no tether to
+                     # origin; bonds + viscous drag keep things bounded). With
+                     # k_0 = 0.01 we previously had the spike at ω = √(k_0/m)
+                     # = 0.1 — a visible mismatch (2026-06-19, notebook 001).
 I_DRIVE = 0          # which particle gets the drive (any one; pick index 0)
 R_0     = 1.0        # Arrhenius rate prefactor (sets the time scale; supp leaves implicit)
 
